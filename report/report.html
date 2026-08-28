@@ -1,0 +1,143 @@
+            <div class="page-header">
+                <div class="page-title">NEW ENTRY</div>
+                <div class="page-subtitle">Submit a new support ticket</div>
+            </div>
+
+            <div class="card" style="max-width:900px;">
+                <div class="card-header">
+                    <div class="dot dot-green"></div>
+                    <span class="label">Ticket Form</span>
+                </div>
+
+                <form id="ticketForm" novalidate style="padding:28px; display:flex; flex-direction:column; gap:28px;">
+                    <div>
+                        <div class="section-heading">Tracking Info</div>
+                        <div class="form-grid-3">
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Ticket No</div>
+                                <input type="text" required id="ticketNoInput" name="ticketNo" class="input">
+                                <p style="font-family:var(--font-mono); font-size:9px; margin-top:5px; color:var(--text-muted);">
+                                    LAST: <span id="last-ticket-hint">...</span>
+                                </p>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Ticket Tagging</div>
+                                <input type="text" required name="ticketTagging" class="input">
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Date/Time Issued</div>
+                                <input type="datetime-local" required name="dateIssued" id="dateIssuedInput" class="input">
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Date/Time Pickup</div>
+                                <input type="datetime-local" required name="datePickedUp" class="input">
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Date/Time Reply</div>
+                                <input type="datetime-local" required name="dateReplied" class="input">
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Ticket Status</div>
+                                <select name="status" required class="input">
+                                    <option value="">Select Status</option>
+                                    <option>PENDING</option>
+                                    <option>RESOLVED</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="section-heading">Client Info</div>
+                        <div class="form-grid-3">
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Customer Name</div>
+                                <input type="text" name="name" required class="input">
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Branch</div>
+                                <select name="branch" required class="input">
+                                    <option value="">Select Branch</option>
+                                    <option>BACOLOD</option><option>BACLARAN</option><option>BALER</option>
+                                    <option>BALIWAG</option><option>BAMBANG</option><option>BANTAY</option>
+                                    <option>BULAN</option><option>CABANATUAN</option><option>CAINTA</option>
+                                    <option>CALAMBA</option><option>CALAPAN</option><option>CAUAYAN</option>
+                                    <option>DAET</option><option>DAVAO</option><option>GENERAL SANTOS</option>
+                                    <option>GUIMBA</option><option>ILOILO</option><option>KAWIT</option>
+                                    <option>KORONADAL</option><option>LEGAZPI</option><option>LIPA</option>
+                                    <option>LUCENA</option><option>MADDELA</option><option>MANDAUE</option>
+                                    <option>MANSALAY</option><option>MASBATE</option><option>MUNTINLUPA</option>
+                                    <option>NAGA</option><option>ODIONGAN</option><option>ORTIGAS CENTER, PASIG</option>
+                                    <option>PUERTO PRINCESA</option><option>ROXAS</option><option>SAN FERNANDO, LA UNION</option>
+                                    <option>SAN JACINTO</option><option>SAN JOSE, NUEVA ECIJA</option><option>SAN JOSE, OCC. MINDORO</option>
+                                    <option>SANTIAGO</option><option>SOLANO</option><option>SORSOGON</option>
+                                    <option>TABACO</option><option>TAGAYTAY</option><option>TAGBILARAN</option>
+                                    <option>TARLAC</option><option>TUGUEGARAO</option><option>URDANETA</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Channel</div>
+                                <select name="channel" required class="input">
+                                    <option value="">Select Channel</option>
+                                    <option>HEIMDALL</option><option>EMAIL</option><option>CHATBOT</option>
+                                    <option>WALKIN</option><option>VIBER</option><option>MOBILE APP</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="section-heading">Ticket Info</div>
+                        <div class="form-grid-3">
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Type of Ticket</div>
+                                <select name="type" required class="input">
+                                    <option value="">Select Type</option>
+                                    <option>DEPOSIT CONCERNS</option>
+                                    <option>LOAN CONCERNS</option>
+                                    <option>LOG-IN ISSUES</option>
+                                    <option>MOBILE APP ISSUES</option>
+                                    <option>SOA</option>
+                                    <option>OTHER CONCERNS</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Type of Engagement</div>
+                                <select name="engagement" required class="input">
+                                    <option value="">Select Type</option>
+                                    <option>CONCERN</option><option>REQUEST</option><option>QUERY</option>
+                                    <option>COMPLAINT</option><option>ISSUE</option><option>OTHERS</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Severity Level</div>
+                                <select name="severity" required class="input" style="border-left:2px solid rgba(255,68,68,0.4) !important;">
+                                    <option value="">Select Level</option>
+                                    <option>CRITICAL</option><option>HIGH</option>
+                                    <option>MODERATE</option><option>LOW</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Client Concern</div>
+                                <textarea name="concerns" required class="input" style="height:100px; resize:vertical;" placeholder="Describe the issue..."></textarea>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Assistance Provided</div>
+                                <textarea name="assistance" required class="input" style="height:100px; resize:vertical;" placeholder="Details of help given..."></textarea>
+                            </div>
+                            <div>
+                                <div class="label" style="margin-bottom:7px;">Action Taken</div>
+                                <select name="action" required class="input">
+                                    <option value="">Select Action</option>
+                                    <option>ACCOMMODATED</option><option>ENDORSED</option><option>ESCALATED</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-primary"
+                        style="width:100%; justify-content:center; padding:14px; font-size:12px;">
+                        UPLOAD TICKET
+                    </button>
+                </form>
+            </div>

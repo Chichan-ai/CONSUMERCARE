@@ -1,0 +1,111 @@
+<div id="monitoring-modal" onclick="if(event.target===this)closeMonitoringModal()">
+    <div class="monitoring-modal-box">
+        <!-- Header -->
+        <div class="modal-section" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;">
+            <div>
+                <div class="label" style="color:var(--teal);">KIOSK MONITORING</div>
+                <div id="km-modal-title" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--text);">ADD MAINTENANCE RECORD</div>
+            </div>
+            <button onclick="closeMonitoringModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+        </div>
+
+        <!-- Form -->
+        <form id="km-form" onsubmit="submitKioskMonitoringForm(event)" novalidate>
+            <input type="hidden" id="km-edit-id" value="">
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">LOCATION &amp; TERMINAL</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Kiosk Location <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="km-location" class="input" placeholder="e.g. SM PASIG" required style="text-transform:uppercase;">
+                    </div>
+                    <div class="modal-field">
+                        <label>Terminal No. <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="km-terminal" class="input" placeholder="e.g. T-001" required style="text-transform:uppercase;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">MAINTENANCE DETAILS</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Date of Maintenance <span style="color:var(--red);">*</span></label>
+                        <input type="date" id="km-date" class="input" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>Type of Maintenance <span style="color:var(--red);">*</span></label>
+                        <select id="km-type" class="input" required>
+                            <option value="">— Select Type —</option>
+                            <option value="Thermal Paper">Thermal Paper</option>
+                            <option value="Repair">Repair</option>
+                            <option value="Replacement">Replacement</option>
+                            <option value="Cleaning">Cleaning</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">COST BREAKDOWN</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Shipping Fee (₱)</label>
+                        <input type="number" id="km-shipping" class="input" placeholder="0.00" min="0" step="0.01" value="0" oninput="computeKioskTotal()">
+                    </div>
+                    <div class="modal-field">
+                        <label>Quantity <span style="color:var(--red);">*</span></label>
+                        <input type="number" id="km-quantity" class="input" placeholder="1" min="1" step="1" value="1" required oninput="computeKioskTotal()">
+                    </div>
+                    <div class="modal-field">
+                        <label>Maintenance Cost per Unit (₱) <span style="color:var(--red);">*</span></label>
+                        <input type="number" id="km-cost" class="input" placeholder="0.00" min="0" step="0.01" required oninput="computeKioskTotal()">
+                    </div>
+                    <div class="modal-field">
+                        <label>TOTAL (Auto-Computed)</label>
+                        <div id="km-total-display">₱0.00</div>
+                        <input type="hidden" id="km-total-hidden" value="0">
+                    </div>
+                </div>
+                <div style="margin-top:10px;font-family:var(--font-mono);font-size:9px;color:var(--text-muted);">
+                    FORMULA: TOTAL = (Quantity × Maintenance Cost) + Shipping Fee
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-field">
+                    <label>Remarks</label>
+                    <textarea id="km-remarks" class="input" style="height:80px;resize:vertical;" placeholder="Optional notes about this maintenance..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
+                <button type="submit" id="km-submit-btn" class="btn btn-primary">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    SAVE RECORD
+                </button>
+                <button type="button" onclick="closeMonitoringModal()" class="btn btn-ghost">CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="delete-confirm-modal" onclick="if(event.target===this)closeDeleteConfirm()">
+    <div class="delete-modal-box">
+        <div style="text-align:center;margin-bottom:20px;">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--red);">DELETE RECORD?</div>
+            <div id="delete-confirm-msg" style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.6;"></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+            <button id="confirm-delete-btn" onclick="executeKioskDelete()" class="btn btn-danger">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                YES, DELETE
+            </button>
+            <button onclick="closeDeleteConfirm()" class="btn btn-ghost">CANCEL</button>
+        </div>
+    </div>
+</div>

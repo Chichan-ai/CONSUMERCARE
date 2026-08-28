@@ -1,0 +1,169 @@
+            <div class="page-header">
+                <div>
+                    <div class="page-title">AGRIBANK PAY KIOSK</div>
+                    <div class="page-subtitle">Terminal Status &amp; Maintenance Tracker</div>
+                </div>
+                <!-- Tab-contextual action buttons -->
+                <div id="kiosk-tab-actions" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+            </div>
+
+            <!-- Tab switcher -->
+            <div class="kiosk-tabs" style="margin-bottom:20px;">
+                <button class="kiosk-tab active" id="ktab-terminals" onclick="switchKioskTab('terminals')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:inline;vertical-align:middle;margin-right:5px;"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><rect x="8" y="6" width="8" height="8"/></svg>
+                    TERMINAL STATUS
+                </button>
+                <button class="kiosk-tab" id="ktab-monitoring" onclick="switchKioskTab('monitoring')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:inline;vertical-align:middle;margin-right:5px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    MAINTENANCE MONITORING
+                </button>
+            </div>
+
+            <!-- ── TAB: TERMINAL STATUS ── -->
+            <div id="kiosk-panel-terminals">
+                <div class="card">
+                    <div class="card-header" style="justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="dot dot-green" style="animation:pulse-dot 2s infinite;"></div>
+                            <span class="label" style="color:var(--teal);">Live Terminal Feed</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <div class="search-wrap" style="width:200px;">
+                                <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="kioskSearchInput" class="input" placeholder="Name or terminal #" onkeyup="filterKioskTable()" style="padding:6px 10px 6px 28px !important; font-size:11px;">
+                            </div>
+                            <button class="btn btn-ghost btn-sm" onclick="loadKioskData()">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                REFRESH
+                            </button>
+                            <div class="label">
+                                ACTIVE: <span id="kiosk-count" style="color:var(--accent); font-size:14px; font-weight:700;">00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div id="loader" style="padding:60px; text-align:center; color:var(--teal);">
+                            <div class="spinner" style="margin:0 auto 12px; border-top-color:var(--teal);"></div>
+                            <div class="label">CONNECTING...</div>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="data-table" id="kioskTable" style="display:none;">
+                                <thead>
+                                    <tr>
+                                        <th>Terminal No</th>
+                                        <th>Location</th>
+                                        <th>Go Live</th>
+                                        <th>Hours</th>
+                                        <th>Address</th>
+                                        <th>Kiosk Threshold</th>
+                                        <th style="text-align:right;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: MAINTENANCE MONITORING ── -->
+            <div id="kiosk-panel-monitoring" style="display:none;">
+
+                <!-- Summary stat strip -->
+                <div class="km-stats-strip">
+                    <div class="km-stat" style="--km-color:var(--accent);">
+                        <div class="km-stat-label">Total Records</div>
+                        <div class="km-stat-value" id="km-stat-total">0</div>
+                    </div>
+                    <div class="km-stat" style="--km-color:var(--blue);">
+                        <div class="km-stat-label">Total Cost</div>
+                        <div class="km-stat-value" id="km-stat-cost" style="font-size:1.1rem;">₱0.00</div>
+                    </div>
+                    <div class="km-stat" style="--km-color:var(--orange);">
+                        <div class="km-stat-label">This Month</div>
+                        <div class="km-stat-value" id="km-stat-month">0</div>
+                    </div>
+                    <div class="km-stat" style="--km-color:var(--red);">
+                        <div class="km-stat-label">High Cost (&gt;₱5k)</div>
+                        <div class="km-stat-value" id="km-stat-highcost">0</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card" style="margin-bottom:16px;">
+                    <div style="padding:14px 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+                        <div class="search-wrap" style="flex:1;min-width:180px;">
+                            <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="km-search" class="input" placeholder="Search location, terminal, type..." oninput="applyKioskMonitoringFilters()" style="padding:8px 10px 8px 30px !important;font-size:12px;min-height:38px;">
+                        </div>
+                        <div>
+                            <div class="label" style="margin-bottom:4px;">Terminal No.</div>
+                            <input type="text" id="km-filter-terminal" class="input" placeholder="e.g. T-001" oninput="applyKioskMonitoringFilters()" style="width:130px;font-size:12px;min-height:38px;">
+                        </div>
+                        <div>
+                            <div class="label" style="margin-bottom:4px;">Date From</div>
+                            <input type="date" id="km-filter-date-from" class="input" onchange="applyKioskMonitoringFilters()" style="width:150px;font-size:12px;min-height:38px;">
+                        </div>
+                        <div>
+                            <div class="label" style="margin-bottom:4px;">Date To</div>
+                            <input type="date" id="km-filter-date-to" class="input" onchange="applyKioskMonitoringFilters()" style="width:150px;font-size:12px;min-height:38px;">
+                        </div>
+                        <div>
+                            <div class="label" style="margin-bottom:4px;">Type</div>
+                            <select id="km-filter-type" class="input" onchange="applyKioskMonitoringFilters()" style="width:160px;font-size:12px;min-height:38px;">
+                                <option value="">All Types</option>
+                                <option>Thermal Paper</option>
+                                <option>Repair</option>
+                                <option>Replacement</option>
+                                <option>Cleaning</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+                        <button onclick="clearKioskMonitoringFilters()" class="btn btn-ghost btn-sm">CLEAR</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="card">
+                    <div class="card-header" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="dot dot-green"></div>
+                            <span class="label">Maintenance Records</span>
+                        </div>
+                        <span id="km-record-count" class="label">0 RECORDS</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table" id="km-table">
+                            <thead><tr>
+                                <th>Location</th>
+                                <th>Terminal No.</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th style="text-align:right;">Qty</th>
+                                <th style="text-align:right;">Shipping</th>
+                                <th style="text-align:right;">Unit Cost</th>
+                                <th style="text-align:right;color:var(--accent);">Total</th>
+                                <th>Remarks</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr></thead>
+                            <tbody id="km-table-body">
+                                <tr><td colspan="10" style="padding:32px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">LOADING RECORDS...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <span id="km-page-info" class="label">Page 1 of 1</span>
+                        <div class="page-btn-group">
+                            <button class="page-btn" id="km-prev-btn" onclick="kmChangePage(-1)" disabled>‹</button>
+                            <div id="km-page-numbers" style="display:flex;gap:4px;"></div>
+                            <button class="page-btn" id="km-next-btn" onclick="kmChangePage(1)">›</button>
+                        </div>
+                        <select id="km-per-page" onchange="kmSetPerPage()" class="input" style="width:90px;font-size:11px;min-height:32px;padding:4px 8px !important;">
+                            <option value="10">10 / pg</option>
+                            <option value="25" selected>25 / pg</option>
+                            <option value="50">50 / pg</option>
+                        </select>
+                    </div>
+                </div>
+            </div>

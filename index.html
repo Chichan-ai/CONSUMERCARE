@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Care | DASHBOARD</title>
+
+    <!-- Supabase FIRST -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Chart.js (single import) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel export (single import) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ============= CSS MODULES ============= -->
+    <link rel="stylesheet" href="shared/base.css">
+    <link rel="stylesheet" href="login/login.css">
+    <link rel="stylesheet" href="dashboard/dashboard.css">
+    <link rel="stylesheet" href="summary/summary.css">
+    <link rel="stylesheet" href="report/report.css">
+    <link rel="stylesheet" href="kiosk/kiosk.css">
+    <link rel="stylesheet" href="analytics/analytics.css">
+    <link rel="stylesheet" href="admin/admin.css">
+</head>
+<body class="light">
+
+<!-- Sidebar backdrop overlay -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Mobile Hamburger -->
+<button id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+</button>
+
+
+<!-- =============================================
+     TOP BAR — Global Search, Notifications, Quick Actions
+============================================= -->
+<div id="top-bar" class="hidden">
+    <!-- Page title placeholder (left side) -->
+
+
+    <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+        <!-- Global Search — beside notification -->
+        <div id="global-search-wrap">
+            <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="global-search" placeholder="Search tickets, clients..." oninput="handleGlobalSearch(this.value)" onfocus="openSearchPanel()" autocomplete="off">
+            <div id="search-results-panel"></div>
+        </div>
+        <!-- Notification Bell -->
+        <button id="notif-btn" onclick="toggleNotifPanel()" title="Notifications">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span id="notif-badge">0</span>
+        </button>
+    </div>
+</div>
+
+<!-- Notification Panel -->
+<div id="notif-panel">
+    <div class="notif-header">
+        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text);">ALERTS &amp; NOTIFICATIONS</span>
+        <button onclick="clearAllNotifs()" style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);background:none;border:none;cursor:pointer;letter-spacing:0.08em;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">[CLEAR ALL]</button>
+    </div>
+    <div class="notif-list" id="notif-list">
+        <div style="padding:24px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">NO NOTIFICATIONS</div>
+    </div>
+</div>
+
+<!-- Ticket Detail Modal -->
+<div id="ticket-modal" onclick="if(event.target===this)closeTicketModal()">
+    <div class="ticket-modal-box">
+        <div class="modal-section flex-between" style="padding:16px 24px;">
+            <div>
+                <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">TICKET DETAIL</div>
+                <div id="modal-ticket-no" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent);">#---</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <div id="modal-status-badge" class="badge"></div>
+                <button onclick="closeTicketModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+            </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="modal-section">
+            <div class="label" style="color:var(--accent);margin-bottom:4px;">CLIENT INFORMATION</div>
+            <div class="modal-field-grid">
+                <div class="modal-field"><label>Customer Name</label><div class="modal-field-val" id="modal-name">---</div></div>
+                <div class="modal-field"><label>Branch</label><div class="modal-field-val" id="modal-branch">---</div></div>
+                <div class="modal-field"><label>Channel</label><div class="modal-field-val" id="modal-channel">---</div></div>
+                <div class="modal-field"><label>Date Issued</label><div class="modal-field-val" id="modal-date-issued">---</div></div>
+            </div>
+        </div>
+
+        <!-- Ticket Info -->
+        <div class="modal-section">
+            <div class="label" style="color:var(--accent);margin-bottom:4px;">TICKET DETAILS</div>
+            <div class="modal-field-grid">
+                <div class="modal-field"><label>Ticket Type</label><div class="modal-field-val" id="modal-type">---</div></div>
+                <div class="modal-field"><label>Engagement</label><div class="modal-field-val" id="modal-engagement">---</div></div>
+                <div class="modal-field"><label>Severity</label><div class="modal-field-val" id="modal-severity">---</div></div>
+                <div class="modal-field"><label>Action Taken</label><div class="modal-field-val" id="modal-action">---</div></div>
+            </div>
+            <div class="modal-field" style="margin-top:12px;"><label>Client Concern</label><div class="modal-field-val" id="modal-concern" style="white-space:pre-wrap;">---</div></div>
+            <div class="modal-field" style="margin-top:10px;"><label>Assistance Provided</label><div class="modal-field-val" id="modal-assistance" style="white-space:pre-wrap;">---</div></div>
+        </div>
+
+        <!-- SLA & Resolution -->
+        <div class="modal-section">
+            <div class="label" style="color:var(--accent);margin-bottom:8px;">SLA &amp; RESOLUTION</div>
+            <div class="modal-field-grid">
+                <div class="modal-field"><label>Date Picked Up</label><div class="modal-field-val" id="modal-pickup">---</div></div>
+                <div class="modal-field"><label>Date Replied</label><div class="modal-field-val" id="modal-replied">---</div></div>
+            </div>
+            <div class="sla-bar-wrap" style="margin-top:12px;">
+                <div class="flex-between" style="margin-bottom:4px;">
+                    <span class="label">SLA RESOLUTION TIME</span>
+                    <span id="modal-tat" style="font-family:var(--font-mono);font-size:10px;color:var(--accent);">---</span>
+                </div>
+                <div class="sla-bar-bg"><div class="sla-bar-fill" id="modal-sla-bar" style="width:0%;background:var(--accent);"></div></div>
+            </div>
+        </div>
+
+        <!-- Interaction Log / Notes -->
+        <div class="modal-section">
+            <div class="flex-between" style="margin-bottom:8px;">
+                <div class="label" style="color:var(--accent);">INTERACTION LOG</div>
+                <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);" id="modal-log-count">0 NOTES</span>
+            </div>
+            <div class="interaction-log" id="modal-interaction-log">
+                <div style="text-align:center;padding:16px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">NO NOTES YET</div>
+            </div>
+            <div class="add-note-area" style="margin-top:10px;">
+                <textarea id="note-input" class="input" style="min-height:52px;resize:none;font-size:12px;" placeholder="Add a note or follow-up action..."></textarea>
+                <button onclick="addTicketNote()" class="btn btn-primary btn-sm" style="align-self:flex-end;white-space:nowrap;">ADD NOTE</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="modal-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
+            <button onclick="modalChangeStatus('RESOLVED')" class="btn btn-primary btn-sm">✓ MARK RESOLVED</button>
+            <button onclick="modalChangeStatus('PENDING')" class="btn btn-ghost btn-sm">⏳ SET PENDING</button>
+            <button onclick="modalChangeStatus('BLOCKED')" class="btn btn-danger btn-sm">⊘ BLOCK</button>
+            <button onclick="copyTicketInfo()" class="btn btn-ghost btn-sm" style="margin-left:auto;">⎘ COPY INFO</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
+     LOGIN PAGE (loaded from login/login.html)
+============================================= -->
+<div id="login-section"></div>
+
+<!-- =============================================
+     MAIN DASHBOARD
+============================================= -->
+<div id="main-dashboard" class="hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <!-- Shown when expanded: app icon + name -->
+            <div class="sidebar-brand-icon">
+                <img src="D:\Users\Lenovo\Downloads\files\ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" style="width:100px;height:100px;object-fit:contain"/>
+            </div>
+            <div class="sidebar-brand-text">
+                <div class="brand-name">CONSUMER<span>CARE</span></div>
+                <div class="label" style="margin-top:2px;font-size:9px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.06em;">DIGITAL BANKING · CCS</div>
+            </div>
+            <!-- Toggle button — always visible -->
+            <button id="sidebar-toggle-btn" onclick="toggleSidebarExpand()" title="Toggle sidebar">
+                <div class="toggle-bar">
+                    <span></span><span></span><span></span>
+                </div>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button onclick="showPage('dashboard')" id="nav-dashboard" class="nav-btn active" data-tooltip="DASHBOARD">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span class="nav-label">DASHBOARD</span>
+            </button>
+            <button onclick="showPage('summary')" id="nav-summary" class="nav-btn" data-tooltip="SUMMARY">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                <span class="nav-label">SUMMARY REPORT</span>
+            </button>
+            <button onclick="showPage('report')" id="nav-report" class="nav-btn" data-tooltip="NEW ENTRY">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span class="nav-label">NEW ENTRY</span>
+            </button>
+            <button onclick="showPage('kiosk')" id="nav-kiosk" class="nav-btn" data-tooltip="KIOSK">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><rect x="8" y="6" width="8" height="8"/></svg>
+                <span class="nav-label">AGRIBANK PAY KIOSK</span>
+            </button>
+            <button onclick="showPage('analytics')" id="nav-analytics" class="nav-btn hidden" data-tooltip="ANALYTICS">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span class="nav-label">ANALYTICS</span>
+            </button>
+            <button id="nav-admin" onclick="showPage('admin')" class="nav-btn hidden" data-tooltip="ADMIN">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span class="nav-label">ADMIN</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div style="overflow:hidden; white-space:nowrap; padding:2px 0 4px; padding-left:14px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px;flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="footer-label" style="font-family:var(--font-mono); font-size:9px; color:var(--text-muted); letter-spacing:0.1em;">
+                    <span id="sidebar-user" style="color:var(--accent);">—</span>
+                </span>
+            </div>
+            <button onclick="toggleTheme()" class="footer-btn" title="Toggle Theme">
+                <span id="theme-icon" style="flex-shrink:0;">☀️</span>
+                <span class="footer-label">LIGHT / DARK</span>
+            </button>
+            <button onclick="handleLogout()" class="footer-btn danger" title="Logout">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span class="footer-label">LOGOUT</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+
+    <main id="main-content">
+
+        <!-- Connection Status Bar -->
+        <div id="conn-status-bar" style="display:none;"></div>
+
+        <!-- ======= DASHBOARD PAGE (loaded from dashboard/dashboard.html) ======= -->
+        <section id="page-dashboard"></section>
+
+        <!-- ======= SUMMARY PAGE (loaded from summary/summary.html) ======= -->
+        <section id="page-summary" class="hidden"></section>
+
+        <!-- ======= NEW ENTRY PAGE (loaded from report/report.html) ======= -->
+        <section id="page-report" class="hidden"></section>
+
+        <!-- ======= KIOSK PAGE (loaded from kiosk/kiosk.html) ======= -->
+        <section id="page-kiosk" class="hidden"></section>
+
+        <!-- ======= ADMIN PAGE (loaded from admin/admin.html) ======= -->
+        <section id="page-admin" class="hidden"></section>
+
+        <!-- ======= ANALYTICS PAGE (loaded from analytics/analytics.html) ======= -->
+        <section id="page-analytics" class="hidden"></section>
+
+    </main>
+</div>
+
+<!-- =============================================
+     KIOSK MONITORING FORM MODAL + DELETE CONFIRM MODAL
+     (loaded from kiosk/kiosk-modals.html)
+============================================= -->
+<div id="kiosk-modals-root"></div>
+
+<!-- =============================================
+     ADD / EDIT USER MODAL
+     (loaded from admin/admin-modals.html)
+============================================= -->
+<div id="admin-modals-root"></div>
+
+<!-- ============= JS MODULES ============= -->
+<!-- shared/loader.js must run first — it injects each module's HTML
+     partial into its placeholder, then fires "modulesReady", which
+     shared/app.js (and nothing else) listens for to boot the app. -->
+<script src="shared/loader.js"></script>
+<script src="shared/app.js"></script>
+<script src="login/login.js"></script>
+<script src="dashboard/dashboard.js"></script>
+<script src="summary/summary.js"></script>
+<script src="report/report.js"></script>
+<script src="kiosk/kiosk.js"></script>
+<script src="analytics/analytics.js"></script>
+<script src="admin/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+            <div class="page-header">
+                <div>
+                    <div class="page-title">SYSTEM ADMINISTRATION</div>
+                    <div class="page-subtitle">User Management &amp; Audit Trail</div>
+                </div>
+                <button onclick="downloadExcel()" class="btn btn-excel btn-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    EXPORT TICKETS
+                </button>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto;">
+                    <button class="admin-tab active" id="admin-tab-users" onclick="switchAdminTab('users')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        USER MANAGEMENT
+                    </button>
+                    <button class="admin-tab" id="admin-tab-audit" onclick="switchAdminTab('audit')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        AUDIT TRAIL
+                    </button>
+                </div>
+
+                <div id="admin-panel-users">
+                    <div style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <div class="search-wrap" style="width:210px;">
+                                <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="user-search" oninput="filterUserTable()" placeholder="Search users..." class="input" style="padding:7px 10px 7px 28px !important;font-size:11px;min-height:36px;">
+                            </div>
+                            <select id="user-role-filter" onchange="filterUserTable()" class="input" style="width:125px;font-size:11px;min-height:36px;">
+                                <option value="">All Roles</option>
+                                <option value="ADMIN">Admin</option>
+                                <option value="ENCODER">Encoder</option>
+                            </select>
+                            <select id="user-status-filter" onchange="filterUserTable()" class="input" style="width:125px;font-size:11px;min-height:36px;">
+                                <option value="">All Status</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span class="label">ACTIVE: <span id="user-count" style="color:var(--accent);font-size:14px;font-weight:700;">00</span></span>
+                            <button onclick="renderUserTable()" class="btn btn-ghost btn-sm">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                REFRESH
+                            </button>
+                            <button onclick="openAddUserModal()" class="btn btn-primary btn-sm">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                ADD USER
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>Username</th><th>Role</th><th>Branch</th>
+                                <th>Status</th><th>Joined</th><th style="text-align:right;">Actions</th>
+                            </tr></thead>
+                            <tbody id="user-list-table">
+                                <tr><td colspan="6" style="padding:28px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">LOADING USERS...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="padding:10px 18px;border-top:1px solid var(--border);">
+                        <span class="label">TOTAL: <span id="user-total-count" style="color:var(--text-dim);">0</span></span>
+                    </div>
+                </div>
+
+                <div id="admin-panel-audit" class="hidden">
+                    <div class="card-header" style="justify-content:space-between;border-bottom:1px solid var(--border);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="dot dot-amber"></div>
+                            <span class="label">Activity Stream</span>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <div class="search-wrap" style="width:220px;">
+                                <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="audit-search" class="input" placeholder="Search audit log..." oninput="filterAuditLog()" style="padding:6px 10px 6px 28px !important;font-size:11px;min-height:36px;">
+                            </div>
+                            <select id="audit-filter-type" onchange="filterAuditLog()" class="input" style="min-height:32px;font-size:10px;width:auto;padding:4px 10px !important;">
+                                <option value="all">ALL EVENTS</option>
+                                <option value="ticket">TICKET OPS</option>
+                                <option value="status">STATUS CHANGE</option>
+                                <option value="user">USER MGMT</option>
+                                <option value="export">EXPORTS</option>
+                                <option value="login">AUTH</option>
+                            </select>
+                            <button onclick="exportAuditLog()" class="btn btn-excel btn-sm">EXPORT LOG</button>
+                            <button onclick="clearAuditLog()" style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);background:none;border:none;cursor:pointer;letter-spacing:0.08em;margin-left:8px;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-muted)'">[CLEAR]</button>
+                        </div>
+                    </div>
+
+                    <div id="audit-log-container" style="padding:16px 20px;max-height:520px;overflow-y:auto;">
+                        <div style="text-align:center;padding:32px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">AUDIT LOG LOADING...</div>
+                    </div>
+
+                    <div style="padding:10px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                        <span class="label">TOTAL EVENTS: <span id="audit-total-count" style="color:var(--accent);font-weight:700;">0</span></span>
+                        <span class="label" id="audit-session-label">SESSION: <span style="color:var(--text-dim);" id="audit-session-user">--</span></span>
+                    </div>
+                </div>
+            </div>

@@ -1,0 +1,65 @@
+            <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--border); padding-bottom:16px;">
+                <div>
+                    <div class="page-title">CS SUMMARY</div>
+                    <div class="page-subtitle">Performance Dashboard</div>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:16px; margin-top:20px; max-width:900px;">
+                <div class="card">
+                    <div class="card-header" style="justify-content:space-between;">
+                        <span class="label">Real-Time Metrics</span>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span class="label">Ticket FTM:</span>
+                            <span id="global-monthly-total" style="font-family:var(--font-mono); font-size:20px; font-weight:700; color:var(--accent);">---</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; background:rgba(255,255,255,0.02); padding:10px 20px; border-bottom:1px solid var(--border);">
+                            <span class="label">Metric Category</span>
+                            <span class="label" style="text-align:right;">Mobile App &amp; Kiosk</span>
+                        </div>
+                        <div style="border-bottom:1px solid var(--border);">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; padding:20px; align-items:center;">
+                                <span class="label">TICKET FTD</span>
+                                <span id="ftd-ma" style="font-family:var(--font-mono); font-size:40px; font-weight:700; text-align:right; padding-right:20px;">0</span>
+                            </div>
+                        </div>
+                        <div style="border-bottom:1px solid var(--border); background:var(--accent-dim);">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; padding:20px; align-items:center;">
+                                <span class="label">Monthly Daily Avg</span>
+                                <span id="mt-ma" style="font-family:var(--font-mono); font-size:40px; font-weight:700; color:var(--accent); text-align:right; padding-right:20px;">0</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; padding:20px; align-items:center;">
+                                <span class="label">Total Resolved</span>
+                                <span id="res-ma" style="font-family:var(--font-mono); font-size:40px; font-weight:700; opacity:0.3; text-align:right; padding-right:20px;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="justify-content:space-between;">
+                        <span class="label" style="color:var(--accent);">Tickets For The Day</span>
+                        <span id="today-total-tag" class="label">0 TOTAL</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th><th>Name</th><th>Type</th><th>Branch</th><th style="text-align:right;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summary-daily-list"></tbody>
+                        </table>
+                        <div id="summary-empty-msg" class="hidden" style="padding:40px; text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">
+                            NO TICKETS FOR TODAY
+                        </div>
+                    </div>
+                    <div style="padding:10px 16px; border-top:1px solid var(--border); background:rgba(255,255,255,0.01);">
+                        <span class="label">SYNC: <span id="summary-date-display" style="color:var(--text-dim);"></span> · AGRIBANK CONSUMER CARE</span>
+                    </div>
+                </div>
+            </div>

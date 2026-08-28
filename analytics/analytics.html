@@ -1,0 +1,106 @@
+            <div class="page-header">
+                <div>
+                    <div class="page-title">ANALYTICS &amp; INSIGHTS</div>
+                    <div class="page-subtitle">Advanced KPI Tracking &amp; Trend Analysis</div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <select id="analytics-period" onchange="renderAnalytics()" class="input btn-sm" style="min-height:36px;font-size:11px;width:auto;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                    <button onclick="downloadAnalyticsPDF()" class="btn btn-ghost btn-sm">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF REPORT
+                    </button>
+                </div>
+            </div>
+
+            <!-- SLA / Escalation banner -->
+            <div id="escalation-banner" class="escalation-banner hidden">
+                <div class="dot dot-red" style="width:10px;height:10px;animation:pulse-dot 1.5s infinite;"></div>
+                <span style="font-family:var(--font-mono);font-size:11px;color:var(--red);font-weight:700;" id="escalation-msg">0 CRITICAL TICKETS REQUIRE IMMEDIATE ATTENTION</span>
+            </div>
+
+            <!-- KPI Summary Row -->
+            <div class="stats-grid" style="margin-bottom:24px;">
+                <div class="card stat-card" style="--stripe-color:var(--accent);">
+                    <div class="label">Resolution Rate</div>
+                    <div class="stat-num" id="an-res-rate" style="color:var(--accent);">--%</div>
+                </div>
+                <div class="card stat-card" style="--stripe-color:var(--blue);">
+                    <div class="label">Avg Handle Time</div>
+                    <div class="stat-num" id="an-aht" style="color:var(--blue);">--</div>
+                </div>
+                <div class="card stat-card" style="--stripe-color:var(--orange);">
+                    <div class="label">Reopen Rate</div>
+                    <div class="stat-num" id="an-reopen" style="color:var(--orange);">--%</div>
+                </div>
+                <div class="card stat-card" style="--stripe-color:var(--purple);">
+                    <div class="label">Peak Hour</div>
+                    <div class="stat-num" id="an-peak" style="color:var(--purple);font-size:1.4rem;">--:--</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="analytics-grid" style="margin-bottom:24px;">
+                <div class="card" style="grid-column:1/-1">
+                    <div class="card-header">
+                        <div class="dot dot-green"></div>
+                        <span class="label">Daily Ticket Volume (Trend)</span>
+                    </div>
+                    <div style="padding:20px;height:260px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="dot dot-amber"></div>
+                        <span class="label">Resolution Time Distribution</span>
+                    </div>
+                    <div style="padding:20px;height:240px;">
+                        <canvas id="tatDistChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="dot dot-red"></div>
+                        <span class="label">Severity Breakdown</span>
+                    </div>
+                    <div style="padding:20px;height:240px;">
+                        <canvas id="severityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="dot dot-green"></div>
+                        <span class="label">Channel Distribution</span>
+                    </div>
+                    <div style="padding:20px;height:240px;">
+                        <canvas id="channelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLA Tracker Table -->
+            <div class="card">
+                <div class="card-header" style="justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div class="dot dot-red" style="animation:pulse-dot 2s infinite;"></div>
+                        <span class="label" style="color:var(--red);">SLA BREACH WATCH — Critical &amp; Pending</span>
+                    </div>
+                    <span id="sla-table-count" class="label">0 TICKETS</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>Ticket #</th><th>Client</th><th>Branch</th><th>Severity</th><th>Issued</th><th>Age</th><th style="text-align:right;">Status</th>
+                        </tr></thead>
+                        <tbody id="sla-table-body"></tbody>
+                    </table>
+                </div>
+            </div>

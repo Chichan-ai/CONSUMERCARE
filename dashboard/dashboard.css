@@ -1,0 +1,54 @@
+/* ── KPI Trend Row ── */
+.kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    margin-top: 4px;
+}
+.kpi-up { color: var(--accent); }
+.kpi-down { color: var(--red); }
+.kpi-flat { color: var(--text-muted); }
+
+/* ── Filter Bar on dashboard ── */
+#filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+}
+.filter-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.filter-chip:hover { border-color: var(--border-accent); color: var(--accent); background: var(--accent-dim); }
+.filter-chip.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); font-weight: 700; }
+.filter-chip.chip-red { --chip-color: var(--red); }
+.filter-chip.chip-orange { --chip-color: var(--orange); }
+.filter-chip.active.chip-red { border-color: var(--red); color: var(--red); background: rgba(255,68,68,0.1); }
+.filter-chip.active.chip-orange { border-color: var(--orange); color: var(--orange); background: rgba(255,107,53,0.1); }
+
+/* ── SLA / Escalation Alert Banner ── */
+.escalation-banner {
+    background: rgba(255,68,68,0.08);
+    border: 1px solid rgba(255,68,68,0.25);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    animation: sev-blink 3s ease-in-out infinite;
+}
+.escalation-banner .dot-red { width: 10px; height: 10px; }
+

@@ -1,0 +1,98 @@
+<div id="add-user-modal" onclick="if(event.target===this)closeAddUserModal()">
+    <div class="add-user-modal-box">
+        <!-- Header -->
+        <div class="um-section" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;">
+            <div>
+                <div class="label" style="color:var(--teal);">USER MANAGEMENT</div>
+                <div id="um-modal-title" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--text);">ADD NEW USER</div>
+            </div>
+            <button type="button" onclick="closeAddUserModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+        </div>
+
+        <form id="um-form" onsubmit="submitUserForm(event)" novalidate>
+            <input type="hidden" id="um-edit-username" value="">
+
+            <!-- Credentials -->
+            <div class="um-section">
+                <div class="label" style="color:var(--accent);margin-bottom:14px;">ACCOUNT CREDENTIALS</div>
+                <div class="um-field">
+                    <label>Username <span class="req">*</span></label>
+                    <input type="text" id="um-username" class="input" placeholder="e.g. JUAN_DELA_CRUZ"
+                        style="text-transform:uppercase;letter-spacing:0.05em;"
+                        oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9_]/g,'')" required>
+                    <div class="hint">Letters, numbers, underscores only. Min 3 characters.</div>
+                </div>
+                <div class="um-field">
+                    <label>Password <span class="req" id="um-pw-req">*</span></label>
+                    <div style="position:relative;">
+                        <input type="password" id="um-password" class="input" placeholder="Minimum 6 characters"
+                            oninput="checkPwStrength(this.value)" style="padding-right:46px;">
+                        <button type="button" onclick="toggleUmPassword()" style="position:absolute;right:0;top:0;bottom:0;width:44px;background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;justify-content:center;" id="um-pw-eye">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="um-eye-svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                    <div class="pw-strength" id="um-pw-strength" style="display:none;">
+                        <div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div>
+                        <div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div>
+                        <span class="pw-lbl" id="um-pw-lbl"></span>
+                    </div>
+                    <div class="hint" id="um-pw-hint">Minimum 6 characters required.</div>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div class="um-section">
+                <div class="label" style="color:var(--accent);margin-bottom:14px;">PROFILE INFORMATION</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div class="um-field" style="margin:0;">
+                        <label>Role <span class="req">*</span></label>
+                        <select id="um-role" class="input" required>
+                            <option value="">— Select Role —</option>
+                            <option value="ENCODER">Encoder</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                    <div class="um-field" style="margin:0;">
+                        <label>Status <span class="req">*</span></label>
+                        <select id="um-status" class="input" required>
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="um-field">
+                    <label>Branch (Optional)</label>
+                    <select id="um-branch" class="input">
+                        <option value="">— No Branch —</option>
+                        <option>BACOLOD</option><option>BACLARAN</option><option>BALER</option>
+                        <option>BALIWAG</option><option>BAMBANG</option><option>BANTAY</option>
+                        <option>BULAN</option><option>CABANATUAN</option><option>CAINTA</option>
+                        <option>CALAMBA</option><option>CALAPAN</option><option>CAUAYAN</option>
+                        <option>DAET</option><option>DAVAO</option><option>GENERAL SANTOS</option>
+                        <option>GUIMBA</option><option>ILOILO</option><option>KAWIT</option>
+                        <option>KORONADAL</option><option>LEGAZPI</option><option>LIPA</option>
+                        <option>LUCENA</option><option>MADDELA</option><option>MANDAUE</option>
+                        <option>MANSALAY</option><option>MASBATE</option><option>MUNTINLUPA</option>
+                        <option>NAGA</option><option>ODIONGAN</option><option>ORTIGAS CENTER, PASIG</option>
+                        <option>PUERTO PRINCESA</option><option>ROXAS</option>
+                        <option>SAN FERNANDO, LA UNION</option><option>SAN JACINTO</option>
+                        <option>SAN JOSE, NUEVA ECIJA</option><option>SAN JOSE, OCC. MINDORO</option>
+                        <option>SANTIAGO</option><option>SOLANO</option><option>SORSOGON</option>
+                        <option>TABACO</option><option>TAGAYTAY</option><option>TAGBILARAN</option>
+                        <option>TARLAC</option><option>TUGUEGARAO</option><option>URDANETA</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="um-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
+                <button type="submit" id="um-submit-btn" class="btn btn-primary">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    SAVE USER
+                </button>
+                <button type="button" onclick="closeAddUserModal()" class="btn btn-ghost">CANCEL</button>
+                <div id="um-error" class="um-error" style="width:100%;"></div>
+            </div>
+        </form>
+    </div>
+</div>

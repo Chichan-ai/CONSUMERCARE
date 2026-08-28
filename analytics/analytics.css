@@ -1,0 +1,9 @@
+/* ── Analytics Page extra charts ── */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+@media (min-width: 768px) { .analytics-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1200px) { .analytics-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
