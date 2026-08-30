@@ -70,15 +70,23 @@ async function loadKioskData() {
 
             const cleanDate  = k.go_live ? k.go_live.split('T')[0] : '---';
             const badgeClass = isActive ? 'badge-active' : 'badge-inactive';
+            const location   = k.location || '---';
+            const address    = k.address  || '---';
+            const threshold  = k.kiosk_threshold;
+            const thresholdTxt = (threshold !== null && threshold !== '' && !isNaN(parseFloat(threshold)))
+                ? '₱' + parseFloat(threshold).toLocaleString('en-PH')
+                : '---';
+            const locationSafe = escapeHtml(location);
+            const addressSafe  = escapeHtml(address);
 
             rows.push(`
                 <tr>
                     <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:12px;">#${escapeHtml(String(k.terminal_id || '---'))}</td>
-                    <td style="font-weight:500;">${escapeHtml(k.location || '---')}</td>
+                    <td style="font-weight:500;" title="${locationSafe}">${locationSafe}</td>
                     <td style="color:var(--text-dim);font-size:12px;">${cleanDate}</td>
                     <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(k.hours || '---')}</td>
-                    <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(k.address || '---')}</td>
-                    <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(String(k.kiosk_threshold || '---'))}</td>
+                    <td style="color:var(--text-dim);font-size:12px;" title="${addressSafe}">${addressSafe}</td>
+                    <td style="color:var(--text-dim);font-size:12px;">${thresholdTxt}</td>
                     <td style="text-align:right;"><span class="badge ${badgeClass}">${statusStr}</span></td>
                 </tr>`);
         });

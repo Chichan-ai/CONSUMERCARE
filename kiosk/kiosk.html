@@ -28,7 +28,7 @@
                             <span class="label" style="color:var(--teal);">Live Terminal Feed</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                            <div class="search-wrap" style="width:200px;">
+                            <div class="search-wrap kiosk-search">
                                 <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                                 <input type="text" id="kioskSearchInput" class="input" placeholder="Name or terminal #" onkeyup="filterKioskTable()" style="padding:6px 10px 6px 28px !important; font-size:11px;">
                             </div>
@@ -46,7 +46,7 @@
                             <div class="spinner" style="margin:0 auto 12px; border-top-color:var(--teal);"></div>
                             <div class="label">CONNECTING...</div>
                         </div>
-                        <div style="overflow-x:auto;">
+                        <div class="table-wrap">
                             <table class="data-table" id="kioskTable" style="display:none;">
                                 <thead>
                                     <tr>

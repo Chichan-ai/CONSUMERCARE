@@ -57,6 +57,8 @@
     border-top-color: var(--border-glass);
     border-radius: 16px;
     width: 100%; max-width: 700px;
+    max-height: 92vh;
+    overflow-y: auto;
     box-shadow:
         0 2px 0 0 rgba(255,255,255,0.04) inset,
         0 24px 48px rgba(0,0,0,0.5),
@@ -140,5 +142,77 @@
     color: var(--accent); padding: 12px 14px;
     background: var(--accent-dim); border: 1px solid var(--border-accent);
     border-radius: 8px; text-align: center; letter-spacing: 0.05em;
+}
+
+/* =============================================
+   KIOSK SCREEN-FIT — make every card fit the viewport
+============================================= */
+#page-kiosk {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+#page-kiosk .card,
+#page-kiosk .kiosk-tabs,
+#page-kiosk .km-stats-strip {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Kiosk side table wrapper never exceeds the card */
+#kiosk-panel-terminals .table-wrap,
+#kiosk-panel-monitoring .table-wrap {
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Tab switcher wraps instead of overflowing */
+.kiosk-tabs { flex-wrap: wrap; }
+
+/* Terminal status search — fluid width */
+.kiosk-search { width: 200px; min-width: 0; }
+#kioskSearchInput,
+#kiosk-tab-actions { max-width: 100%; }
+
+/* ── Terminal Status table: fixed layout so the card fits ── */
+#kioskTable {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+}
+#kioskTable th,
+#kioskTable td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#kioskTable th:nth-child(1), #kioskTable td:nth-child(1) { width: 10%; }
+#kioskTable th:nth-child(2), #kioskTable td:nth-child(2) { width: 20%; }
+#kioskTable th:nth-child(3), #kioskTable td:nth-child(3) { width:  9%; }
+#kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { width: 10%; }
+#kioskTable th:nth-child(5), #kioskTable td:nth-child(5) { width: 27%; }
+#kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { width: 13%; }
+#kioskTable th:nth-child(7), #kioskTable td:nth-child(7) { width: 11%; }
+
+/* ── Compact touch / small-screen behaviour ── */
+@media (max-width: 767px) {
+    #kiosk-panel-terminals .card-header,
+    #kiosk-panel-monitoring .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #kiosk-panel-terminals .card-header > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+    #kioskSearchInput { width: 100% !important; }
+    .kiosk-search { width: 100%; }
+    #kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { display: none; }
+    #kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { display: none; }
+}
+
+@media (max-width: 480px) {
+    #kioskTable th:nth-child(3), #kioskTable td:nth-child(3) { display: none; }
 }
 
