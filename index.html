@@ -34,7 +34,7 @@
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- Mobile Hamburger -->
-<button id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu" aria-expanded="false">
+<button type="button" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu" aria-expanded="false">
     <span></span><span></span><span></span>
 </button>
 
@@ -54,7 +54,7 @@
             <div id="search-results-panel"></div>
         </div>
         <!-- Notification Bell -->
-        <button id="notif-btn" onclick="toggleNotifPanel()" title="Notifications">
+        <button type="button" id="notif-btn" onclick="toggleNotifPanel()" title="Notifications">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             <span id="notif-badge">0</span>
         </button>
@@ -65,7 +65,7 @@
 <div id="notif-panel">
     <div class="notif-header">
         <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text);">ALERTS &amp; NOTIFICATIONS</span>
-        <button onclick="clearAllNotifs()" style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);background:none;border:none;cursor:pointer;letter-spacing:0.08em;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">[CLEAR ALL]</button>
+        <button type="button" onclick="clearAllNotifs()" style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);background:none;border:none;cursor:pointer;letter-spacing:0.08em;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">[CLEAR ALL]</button>
     </div>
     <div class="notif-list" id="notif-list">
         <div style="padding:24px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">NO NOTIFICATIONS</div>
@@ -82,7 +82,7 @@
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
                 <div id="modal-status-badge" class="badge"></div>
-                <button onclick="closeTicketModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+                <button type="button" onclick="closeTicketModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
             </div>
         </div>
 
@@ -145,16 +145,16 @@
             </div>
             <div class="add-note-area" style="margin-top:10px;">
                 <textarea id="note-input" class="input" style="min-height:52px;resize:none;font-size:12px;" placeholder="Add a note or follow-up action..."></textarea>
-                <button onclick="addTicketNote()" class="btn btn-primary btn-sm" style="align-self:flex-end;white-space:nowrap;">ADD NOTE</button>
+                <button type="button" onclick="addTicketNote()" class="btn btn-primary btn-sm" style="align-self:flex-end;white-space:nowrap;">ADD NOTE</button>
             </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="modal-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
-            <button onclick="modalChangeStatus('RESOLVED')" class="btn btn-primary btn-sm">✓ MARK RESOLVED</button>
-            <button onclick="modalChangeStatus('PENDING')" class="btn btn-ghost btn-sm">⏳ SET PENDING</button>
-            <button onclick="modalChangeStatus('BLOCKED')" class="btn btn-danger btn-sm">⊘ BLOCK</button>
-            <button onclick="copyTicketInfo()" class="btn btn-ghost btn-sm" style="margin-left:auto;">⎘ COPY INFO</button>
+            <button type="button" onclick="modalChangeStatus('RESOLVED')" class="btn btn-primary btn-sm">✓ MARK RESOLVED</button>
+            <button type="button" onclick="modalChangeStatus('PENDING')" class="btn btn-ghost btn-sm">⏳ SET PENDING</button>
+            <button type="button" onclick="modalChangeStatus('BLOCKED')" class="btn btn-danger btn-sm">⊘ BLOCK</button>
+            <button type="button" onclick="copyTicketInfo()" class="btn btn-ghost btn-sm" style="margin-left:auto;">⎘ COPY INFO</button>
         </div>
     </div>
 </div>
@@ -175,42 +175,42 @@
         <div class="sidebar-brand">
             <!-- Shown when expanded: app icon + name -->
             <div class="sidebar-brand-icon">
-                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100px;height:100px;object-fit:contain"/>
+                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100%;height:100%;object-fit:contain">
             </div>
             <div class="sidebar-brand-text">
                 <div class="brand-name">CONSUMER<span>CARE</span></div>
                 <div class="label" style="margin-top:2px;font-size:9px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.06em;">DIGITAL BANKING · CCS</div>
             </div>
             <!-- Toggle button — always visible -->
-            <button id="sidebar-toggle-btn" onclick="toggleSidebarExpand()" title="Toggle sidebar">
-                <div class="toggle-bar">
+            <button type="button" id="sidebar-toggle-btn" onclick="toggleSidebarExpand()" title="Toggle sidebar" aria-label="Toggle sidebar">
+                <span class="toggle-bar">
                     <span></span><span></span><span></span>
-                </div>
+                </span>
             </button>
         </div>
 
         <nav class="sidebar-nav">
-            <button onclick="showPage('dashboard')" id="nav-dashboard" class="nav-btn active" data-tooltip="DASHBOARD">
+            <button type="button" onclick="showPage('dashboard')" id="nav-dashboard" class="nav-btn active" data-tooltip="DASHBOARD">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                 <span class="nav-label">DASHBOARD</span>
             </button>
-            <button onclick="showPage('summary')" id="nav-summary" class="nav-btn" data-tooltip="SUMMARY">
+            <button type="button" onclick="showPage('summary')" id="nav-summary" class="nav-btn" data-tooltip="SUMMARY">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                 <span class="nav-label">SUMMARY REPORT</span>
             </button>
-            <button onclick="showPage('report')" id="nav-report" class="nav-btn" data-tooltip="NEW ENTRY">
+            <button type="button" onclick="showPage('report')" id="nav-report" class="nav-btn" data-tooltip="NEW ENTRY">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 <span class="nav-label">NEW ENTRY</span>
             </button>
-            <button onclick="showPage('kiosk')" id="nav-kiosk" class="nav-btn" data-tooltip="KIOSK">
+            <button type="button" onclick="showPage('kiosk')" id="nav-kiosk" class="nav-btn" data-tooltip="KIOSK">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><rect x="8" y="6" width="8" height="8"/></svg>
                 <span class="nav-label">AGRIBANK PAY KIOSK</span>
             </button>
-            <button onclick="showPage('analytics')" id="nav-analytics" class="nav-btn hidden" data-tooltip="ANALYTICS">
+            <button type="button" onclick="showPage('analytics')" id="nav-analytics" class="nav-btn hidden" data-tooltip="ANALYTICS">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 <span class="nav-label">ANALYTICS</span>
             </button>
-            <button id="nav-admin" onclick="showPage('admin')" class="nav-btn hidden" data-tooltip="ADMIN">
+            <button type="button" id="nav-admin" onclick="showPage('admin')" class="nav-btn hidden" data-tooltip="ADMIN">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <span class="nav-label">ADMIN</span>
             </button>
@@ -223,11 +223,11 @@
                     <span id="sidebar-user" style="color:var(--accent);">—</span>
                 </span>
             </div>
-            <button onclick="toggleTheme()" class="footer-btn" title="Toggle Theme">
+            <button type="button" onclick="toggleTheme()" class="footer-btn" title="Toggle Theme">
                 <span id="theme-icon" style="flex-shrink:0;">☀️</span>
                 <span class="footer-label">LIGHT / DARK</span>
             </button>
-            <button onclick="handleLogout()" class="footer-btn danger" title="Logout">
+            <button type="button" onclick="handleLogout()" class="footer-btn danger" title="Logout">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 <span class="footer-label">LOGOUT</span>
             </button>
