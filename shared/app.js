@@ -69,18 +69,9 @@ document.addEventListener('modulesReady', () => {
         }
     });
 
-    // Apply saved theme (or system preference) — smooth, no dark/light flash
+    // Apply saved theme — light by default (dark only when the user opts in)
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    applyTheme(savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : (prefersDark ? 'dark' : 'light'));
-
-    // Live OS theme changes apply only until the user picks a theme manually
-    if (window.matchMedia && window.matchMedia.addEventListener) {
-        const mq = window.matchMedia('(prefers-color-scheme: dark)');
-        mq.addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
-        });
-    }
+    applyTheme(savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light');
 
     // Night shift subtle filter
     const h = new Date().getHours();
@@ -231,7 +222,7 @@ function applyTheme(theme) {
 
     // Keep mobile browser chrome in sync with the theme
     const metaColor = document.getElementById('meta-theme-color');
-    if (metaColor) metaColor.setAttribute('content', t === 'dark' ? '#050709' : '#f0f4f8');
+    if (metaColor) metaColor.setAttribute('content', t === 'dark' ? '#0c1118' : '#f0f4f8');
 
     const icon = document.getElementById('theme-icon');
     if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';

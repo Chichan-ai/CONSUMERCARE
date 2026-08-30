@@ -51,32 +51,23 @@
     font-size: 9px;
 }
 
-/* Keep all dialogs readable regardless of the app theme. */
+/* Dialogs follow the active theme (dark or .light) for readability */
 .modal-box,
 .ticket-modal-box,
 .monitoring-modal-box,
 .add-user-modal-box,
 .delete-modal-box {
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --surface-raised: #f8fafc;
-    --surface-overlay: #ffffff;
-    --text: #0f172a;
-    --text-dim: #475569;
-    --text-muted: #64748b;
-    --border: rgba(15, 23, 42, 0.14);
-    --border-accent: rgba(5, 150, 105, 0.35);
-    --border-glass: rgba(15, 23, 42, 0.12);
     color: var(--text);
-    background: #ffffff;
+    background: var(--surface-overlay);
+    border-color: var(--border-accent);
+    border-top-color: var(--border-glass);
 }
 
 .modal-box,
 .ticket-modal-box,
 .monitoring-modal-box,
 .add-user-modal-box {
-    border-color: var(--border);
-    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.22);
+    box-shadow: var(--shadow-lg);
 }
 
 .modal-section,
@@ -89,11 +80,11 @@
 ============================================= */
 :root {
     /* Deep Onyx Foundation */
-    --bg: #050709;
-    --bg-mesh: #070b10;
-    --surface: rgba(10,15,22,0.60);
-    --surface-raised: rgba(16,23,34,0.82);
-    --surface-overlay: rgba(22,30,44,0.94);
+    --bg: #0c1118;
+    --bg-mesh: #0e141d;
+    --surface: rgba(17,24,34,0.72);
+    --surface-raised: rgba(25,35,50,0.88);
+    --surface-overlay: rgba(31,43,60,0.96);
     /* Neon Accent System */
     --accent: #00ff9d;
     --accent-mid: rgba(0,255,157,0.18);
@@ -104,12 +95,12 @@
     --teal: #00e5c8;
     --teal-dim: rgba(0,229,200,0.1);
     /* Glass Border System */
-    --border: rgba(255,255,255,0.06);
-    --border-glass: rgba(255,255,255,0.11);
-    --border-accent: rgba(0,255,157,0.22);
-    --text: #e8edf5;
-    --text-muted: #5a6478;
-    --text-dim: #8892a4;
+    --border: rgba(255,255,255,0.08);
+    --border-glass: rgba(255,255,255,0.13);
+    --border-accent: rgba(0,255,157,0.25);
+    --text: #eef2f8;
+    --text-muted: #7d8aa3;
+    --text-dim: #98a5ba;
     /* Layered Shadow System */
     --shadow: 0 2px 0 rgba(255,255,255,0.04) inset, 0 16px 40px rgba(0,0,0,0.5);
     --shadow-lg: 0 2px 0 rgba(255,255,255,0.04) inset, 0 32px 72px rgba(0,0,0,0.7);
@@ -135,7 +126,9 @@
     --bg: #f0f4f8;
     --surface: rgba(255,255,255,0.85);
     --surface-raised: rgba(255,255,255,0.95);
+    --surface-overlay: rgba(255,255,255,0.97);
     --border: rgba(0,0,0,0.08);
+    --border-glass: rgba(0,0,0,0.12);
     --border-accent: rgba(5,120,80,0.3);
     --accent: #059669;
     --accent-dim: rgba(5,150,105,0.1);
@@ -1137,7 +1130,7 @@ body.on-login-page::after {
     backdrop-filter: var(--blur-lg);
     -webkit-backdrop-filter: var(--blur-lg);
     border: 1px solid var(--border-accent);
-    border-top-color: rgba(255,255,255,0.12);
+    border-top-color: var(--border-glass);
     border-radius: 16px;
     padding: 28px;
     width: 420px;
@@ -1344,7 +1337,7 @@ body.sidebar-expanded #top-bar {
     backdrop-filter: var(--blur-lg);
     -webkit-backdrop-filter: var(--blur-lg);
     border: 1px solid var(--border-accent);
-    border-top-color: rgba(255,255,255,0.12);
+    border-top-color: var(--border-glass);
     border-radius: 16px;
     width: 100%;
     max-width: 680px;
@@ -1502,6 +1495,11 @@ body.theme-busy *::after {
 .dark .modal-field-val { background: rgba(255,255,255,0.03); }
 .dark .interaction-entry { background: rgba(255,255,255,0.02); }
 
-/* Adaptive neutral chips (used by audit trail) */
-
-</style>
+/* Softer modal shadows in light mode */
+.light .modal-box,
+.light .ticket-modal-box,
+.light .monitoring-modal-box,
+.light .add-user-modal-box,
+.light .delete-modal-box {
+    box-shadow: 0 16px 48px rgba(15, 23, 42, 0.16), 0 1px 0 rgba(0, 0, 0, 0.04);
+}

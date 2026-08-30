@@ -50,10 +50,10 @@
 }
 #monitoring-modal.open { display: flex; }
 .monitoring-modal-box {
-    background: var(--surface);
+    background: var(--surface-overlay);
     backdrop-filter: var(--blur-md);
     -webkit-backdrop-filter: var(--blur-md);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-accent);
     border-top-color: var(--border-glass);
     border-radius: 16px;
     width: 100%; max-width: 700px;
@@ -82,7 +82,7 @@
 }
 #delete-confirm-modal.open { display: flex; }
 .delete-modal-box {
-    background: var(--surface-raised);
+    background: var(--surface-overlay);
     border: 1px solid rgba(255,68,68,0.35);
     border-radius: 14px;
     width: 100%; max-width: 400px;
