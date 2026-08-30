@@ -347,6 +347,16 @@ body > * { position: relative; z-index: 1; }
     border-radius: 8px;
     background: var(--accent-dim);
     display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.sidebar-brand-icon:hover,
+.sidebar-brand-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--border-accent);
+    outline: none;
+}
+.sidebar-brand-icon:active {
+    transform: scale(0.93);
 }
 
 /* Brand text — visible only when expanded */
@@ -372,76 +382,11 @@ body > * { position: relative; z-index: 1; }
     pointer-events: auto;
 }
 
-/* ── Sidebar toggle button ── */
-#sidebar-toggle-btn {
-    flex-shrink: 0;
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    margin-left: auto;
-    margin-right: 10px;
-    opacity: 0;
-    pointer-events: none;
-}
-
-#sidebar.expanded #sidebar-toggle-btn {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* Collapsed: show toggle btn centered in the brand row */
+/* Collapsed: logo stays as the toggle, centered in the brand row */
 #sidebar:not(.expanded) .sidebar-brand {
     justify-content: center;
     padding-left: 0;
 }
-
-#sidebar:not(.expanded) #sidebar-toggle-btn {
-    opacity: 1;
-    pointer-events: auto;
-    margin-left: 0;
-    margin-right: 0;
-    /* replaces the brand icon in collapsed state */
-}
-
-#sidebar:not(.expanded) .sidebar-brand-icon {
-    display: none;
-}
-
-#sidebar-toggle-btn:hover {
-    background: var(--accent-dim);
-    border-color: var(--border-accent);
-    color: var(--accent);
-}
-
-/* Toggle icon lines */
-.toggle-bar {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    align-items: flex-start;
-    width: 14px;
-}
-.toggle-bar span {
-    display: block;
-    height: 1.5px;
-    background: currentColor;
-    border-radius: 2px;
-    transition: width 0.2s ease;
-}
-.toggle-bar span:nth-child(1) { width: 14px; }
-.toggle-bar span:nth-child(2) { width: 10px; }
-.toggle-bar span:nth-child(3) { width: 14px; }
-
-#sidebar.expanded .toggle-bar span:nth-child(1) { width: 14px; }
-#sidebar.expanded .toggle-bar span:nth-child(2) { width: 14px; }
-#sidebar.expanded .toggle-bar span:nth-child(3) { width: 14px; }
 
 .brand-name {
     font-family: var(--font-mono);
@@ -1075,8 +1020,6 @@ body.on-login-page::after {
     #main-content { margin-left: 0 !important; }
     body.sidebar-expanded #top-bar { left: 0; }
     #top-bar { left: 0 !important; padding-left: 20px; }
-    /* Hide toggle btn on mobile — hamburger takes over */
-    #sidebar-toggle-btn { display: none !important; }
 }
 
 
@@ -1502,4 +1445,55 @@ body.theme-busy *::after {
 .light .add-user-modal-box,
 .light .delete-modal-box {
     box-shadow: 0 16px 48px rgba(15, 23, 42, 0.16), 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* =============================================
+   MOBILE ENHANCEMENTS
+============================================= */
+
+/* Clean taps, no grey flash */
+html, body { -webkit-tap-highlight-color: transparent; }
+#main-content { min-width: 0; }
+
+@media (max-width: 767px) {
+    /* Notched phones: keep fixed chrome clear of the cutout & home bar */
+    #top-bar {
+        top: env(safe-area-inset-top, 0px);
+        padding-left: calc(20px + env(safe-area-inset-left, 0px));
+        padding-right: calc(14px + env(safe-area-inset-right, 0px));
+    }
+    #hamburger-btn {
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        left: calc(12px + env(safe-area-inset-left, 0px));
+    }
+    #main-content {
+        padding-top: calc(80px + env(safe-area-inset-top, 0px)) !important;
+    }
+    /* Global search stretches to fill the top bar next to the bell */
+    #top-bar > div {
+        flex: 1 1 auto;
+        min-width: 0;
+        justify-content: flex-end;
+    }
+    #global-search-wrap {
+        flex: 1 1 auto;
+        min-width: 0;
+        width: auto;
+        max-width: 100%;
+    }
+    #global-search-wrap:focus-within { width: auto; }
+    /* Compact cards */
+    .card-header { padding: 11px 14px; }
+    .stat-card { padding: 16px 14px; }
+    /* Modals hug the viewport */
+    .modal-section,
+    .monitoring-modal-box .modal-section,
+    .um-section { padding: 16px; }
+    .modal-box,
+    .ticket-modal-box,
+    .monitoring-modal-box,
+    .add-user-modal-box,
+    .delete-modal-box { border-radius: 14px; }
+    /* Toast clears the home indicator */
+    .toast { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
 }

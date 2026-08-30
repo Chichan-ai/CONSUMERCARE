@@ -190,20 +190,14 @@
     <!-- SIDEBAR -->
     <aside id="sidebar">
         <div class="sidebar-brand">
-            <!-- Shown when expanded: app icon + name -->
-            <div class="sidebar-brand-icon">
-                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100%;height:100%;object-fit:contain">
+            <!-- App icon: doubles as the sidebar toggle (desktop: collapse/expand, mobile: close drawer) -->
+            <div class="sidebar-brand-icon" role="button" tabindex="0" aria-label="Toggle sidebar" title="Toggle sidebar" onclick="toggleSidebarFromLogo()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSidebarFromLogo();}">
+                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100%;height:100%;object-fit:contain" draggable="false">
             </div>
             <div class="sidebar-brand-text">
                 <div class="brand-name">CONSUMER<span>CARE</span></div>
                 <div class="label" style="margin-top:2px;font-size:9px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.06em;">DIGITAL BANKING · CCS</div>
             </div>
-            <!-- Toggle button — always visible -->
-            <button type="button" id="sidebar-toggle-btn" onclick="toggleSidebarExpand()" title="Toggle sidebar" aria-label="Toggle sidebar">
-                <span class="toggle-bar">
-                    <span></span><span></span><span></span>
-                </span>
-            </button>
         </div>
 
         <nav class="sidebar-nav">

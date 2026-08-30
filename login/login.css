@@ -251,3 +251,14 @@ body:has(#login-section:not(.hidden))::after {
     text-transform: uppercase;
 }
 
+/* ── Mobile login tweaks ── */
+@media (max-width: 480px) {
+    #login-section { padding: 16px; align-items: flex-start; padding-top: calc(24px + env(safe-area-inset-top, 0px)); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+    .login-card-header { padding: 24px 20px 20px; }
+    .login-card-body { padding: 24px 20px 20px; }
+    .login-card-footer { padding: 12px 20px 16px; }
+    .login-logo-wrap { width: 64px; height: 64px; margin-bottom: 12px; }
+    .login-title { font-size: 18px; letter-spacing: 0.1em; }
+    .login-subtitle { font-size: 9px; }
+}
+

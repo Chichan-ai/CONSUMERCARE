@@ -211,6 +211,15 @@
     .kiosk-search { width: 100%; }
     #kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { display: none; }
     #kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { display: none; }
+    /* Monitoring filter inputs stack full-width instead of overflowing */
+    #kiosk-panel-monitoring > .card > div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #km-filter-terminal,
+    #km-filter-date-from,
+    #km-filter-date-to,
+    #km-filter-type { width: 100% !important; }
 }
 
 @media (max-width: 480px) {

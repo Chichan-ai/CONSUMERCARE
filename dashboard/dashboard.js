@@ -77,12 +77,13 @@ function populateTable(dataToDisplay) {
                 ).join('')}
             </select>`;
 
+        // Enhanced: long client / branch names wrap + hover tooltips so nothing is hidden
         return `
             <tr class="ticket-row" onclick="openTicketModal('${t.TicketNo}')">
-                <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo || '---'}</td>
-                <td style="font-weight:600;text-transform:uppercase;">${safeName}</td>
-                <td style="color:var(--text-dim);font-size:12px;">${safeBranch}</td>
-                <td class="${sevClass}" style="font-family:var(--font-mono);font-size:11px;">${tSeverity}</td>
+                <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;" title="#${t.TicketNo || '---'}">#${t.TicketNo || '---'}</td>
+                <td class="cell-wrap" style="font-weight:600;text-transform:uppercase;" title="${safeName}">${safeName}</td>
+                <td class="cell-wrap" style="color:var(--text-dim);font-size:12px;" title="${safeBranch}">${safeBranch}</td>
+                <td class="${sevClass}" style="font-family:var(--font-mono);font-size:11px;" title="${tSeverity}">${tSeverity}</td>
                 <td style="text-align:right;">${statusDropdown}</td>
             </tr>`;
     }).join('');

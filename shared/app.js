@@ -294,6 +294,12 @@ function restoreSidebarState() {
 // Legacy stubs — kept for any remaining callers
 function toggleSidebar() { toggleSidebarExpand(); }
 
+// Sidebar logo click: desktop = expand/collapse, mobile = open/close drawer
+function toggleSidebarFromLogo() {
+    if (window.innerWidth <= 767) toggleSidebar();
+    else toggleSidebarExpand();
+}
+
 function closeSidebar()   { /* no-op — no mobile overlay in new design */ }
 
 // =============================================
