@@ -329,8 +329,8 @@ function populateTableClickable(dataToDisplay) {
         const statusDropdown = `<select class="status-select ${colorClass}" onchange="handleStatusChange(this, '${t.TicketNo}')" onclick="event.stopPropagation()">${['PENDING','RESOLVED','BLOCKED'].map(opt=>`<option value="${opt}" ${tStatus===opt?'selected':''}>${opt}</option>`).join('')}</select>`;
         return `<tr style="cursor:pointer;" onclick="openTicketModal('${t.TicketNo}')">
             <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo||'---'}</td>
-            <td style="font-weight:600;text-transform:uppercase;">${safeName}</td>
-            <td style="color:var(--text-dim);font-size:12px;">${safeBranch}</td>
+            <td style="font-weight:600;text-transform:uppercase;" title="${safeName}">${safeName}</td>
+            <td style="color:var(--text-dim);font-size:12px;" title="${safeBranch}">${safeBranch}</td>
             <td class="${sevClass}" style="font-family:var(--font-mono);font-size:11px;">${tSeverity}</td>
             <td style="text-align:right;">${statusDropdown}</td>
         </tr>`;

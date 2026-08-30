@@ -101,3 +101,59 @@
 }
 .escalation-banner .dot-red { width: 10px; height: 10px; }
 
+/* =============================================
+   DASHBOARD SCREEN-FIT — same fit as AGRIBANK PAY KIOSK
+============================================= */
+#page-dashboard {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+#page-dashboard .card,
+#page-dashboard .stats-grid,
+#page-dashboard .charts-grid,
+#page-dashboard .table-wrap {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Live Database table — fixed layout so the card fits */
+#page-dashboard .live-database-card .data-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+}
+#page-dashboard .live-database-card .data-table th,
+#page-dashboard .live-database-card .data-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#page-dashboard .live-database-card .data-table th:nth-child(1),
+#page-dashboard .live-database-card .data-table td:nth-child(1) { width: 18%; }
+#page-dashboard .live-database-card .data-table th:nth-child(2),
+#page-dashboard .live-database-card .data-table td:nth-child(2) { width: 32%; }
+#page-dashboard .live-database-card .data-table th:nth-child(3),
+#page-dashboard .live-database-card .data-table td:nth-child(3) { width: 24%; }
+#page-dashboard .live-database-card .data-table th:nth-child(4),
+#page-dashboard .live-database-card .data-table td:nth-child(4) { width: 14%; }
+#page-dashboard .live-database-card .data-table th:nth-child(5),
+#page-dashboard .live-database-card .data-table td:nth-child(5) { width: 12%; }
+#page-dashboard .live-database-card .dashboard-table-wrap { min-width: 0; }
+
+/* Dashboard search — fluid width */
+.dashboard-search-wrap { max-width: 100%; min-width: 0; }
+
+/* ── Compact touch / small-screen behaviour ── */
+@media (max-width: 767px) {
+    #page-dashboard .card-header,
+    #page-dashboard .live-database-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #page-dashboard .live-database-header { width: 100%; }
+    .dashboard-search-wrap { width: 100%; }
+    .dashboard-header-actions { width: 100%; justify-content: space-between; }
+}
+
