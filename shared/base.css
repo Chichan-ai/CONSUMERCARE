@@ -1470,4 +1470,38 @@ body.sidebar-expanded #top-bar {
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .gap-8 { gap: 8px; }
 
+/* =============================================
+   THEME ENHANCEMENTS
+============================================= */
+
+/* Smooth cross-fade when toggling dark ⇄ light (applied via body.theme-busy) */
+body.theme-busy *,
+body.theme-busy *::before,
+body.theme-busy *::after {
+    transition:
+        background-color 0.4s ease,
+        color 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.5s ease !important;
+}
+
+/* ── Light-mode contrast fixes ── */
+.light .footer-btn:hover { background: rgba(0,0,0,0.05); }
+
+.light #global-search,
+.light #global-search-wrap { background: rgba(0,0,0,0.04) !important; }
+
+.light .modal-field-val { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); }
+
+.light .interaction-entry { background: rgba(0,0,0,0.02); }
+
+.light .notif-item,
+.light .search-result-item { border-bottom-color: rgba(0,0,0,0.07); }
+
+/* Keep dark-mode surfaces crisp for elements that hard-code white-glass fills */
+.dark .modal-field-val { background: rgba(255,255,255,0.03); }
+.dark .interaction-entry { background: rgba(255,255,255,0.02); }
+
+/* Adaptive neutral chips (used by audit trail) */
+
 </style>

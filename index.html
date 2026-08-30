@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consumer Care | DASHBOARD</title>
+    <meta name="theme-color" id="meta-theme-color" content="#f0f4f8">
     <link rel="icon" href="assets/agribankicon.ico" type="image/x-icon">
+
+    <!-- Apply saved/system theme before first paint → no flash of wrong theme -->
+    <style>
+        html.light, html.light body { background:#f0f4f8; }
+        html.dark,  html.dark  body { background:#050709; }
+    </style>
+    <script>
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('theme'); } catch (e) {}
+            if (t !== 'dark' && t !== 'light') {
+                t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+            }
+            document.documentElement.classList.add(t);
+            var meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', t === 'dark' ? '#050709' : '#f0f4f8');
+        })();
+    </script>
 
     <!-- Supabase FIRST -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -69,11 +69,18 @@ document.addEventListener('modulesReady', () => {
         }
     });
 
-    // Apply saved theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.body.className = savedTheme;
-    const themeIcon = document.getElementById('theme-icon');
-    if (themeIcon) themeIcon.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+    // Apply saved theme (or system preference) — smooth, no dark/light flash
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : (prefersDark ? 'dark' : 'light'));
+
+    // Live OS theme changes apply only until the user picks a theme manually
+    if (window.matchMedia && window.matchMedia.addEventListener) {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        mq.addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+        });
+    }
 
     // Night shift subtle filter
     const h = new Date().getHours();
@@ -211,14 +218,31 @@ function showDashboard() {
 // =============================================
 // THEME
 // =============================================
-function toggleTheme() {
-    const isDark = document.body.classList.contains('dark');
+function applyTheme(theme) {
+    const t = theme === 'dark' ? 'dark' : 'light';
     document.body.classList.remove('dark', 'light');
-    document.body.classList.add(isDark ? 'light' : 'dark');
-    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    document.body.classList.add(t);
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(t);
+    document.documentElement.style.background = '';   // let body handle the canvas
+
+    document.body.classList.add('theme-busy');               // smooth cross-fade
+    setTimeout(() => document.body.classList.remove('theme-busy'), 450);
+
+    // Keep mobile browser chrome in sync with the theme
+    const metaColor = document.getElementById('meta-theme-color');
+    if (metaColor) metaColor.setAttribute('content', t === 'dark' ? '#050709' : '#f0f4f8');
+
     const icon = document.getElementById('theme-icon');
-    if (icon) icon.innerText = isDark ? '🌙' : '☀️';
+    if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';
+
     if (cachedTickets.length > 0) renderDashboard(cachedTickets);
+}
+
+function toggleTheme() {
+    const goDark = !document.body.classList.contains('dark');
+    localStorage.setItem('theme', goDark ? 'dark' : 'light');
+    applyTheme(goDark ? 'dark' : 'light');
 }
 
 function showPage(page) {
