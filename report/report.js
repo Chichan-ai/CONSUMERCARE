@@ -24,6 +24,13 @@ async function handleFormSubmit(e) {
     if (!isValid) { showToast('⚠ FILL ALL REQUIRED FIELDS', true); return; }
 
     const formData = new FormData(form);
+    const attachments = Array.from(formData.getAll('attachments')).filter(file => file instanceof File && file.size > 0);
+    const oversizedFile = attachments.find(file => file.size > 10 * 1024 * 1024);
+    if (oversizedFile) {
+        showToast(`⚠ FILE TOO LARGE: ${oversizedFile.name} (10 MB MAX)`, true);
+        return;
+    }
+
     btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#040c0a;border-color:rgba(4,12,10,0.2);"></div> TRANSMITTING...';
     btn.disabled  = true;
 
@@ -48,9 +55,39 @@ async function handleFormSubmit(e) {
 
         if (error) throw new Error(error.message);
 
-        showToast('✓ UPLOAD COMPLETE');
+        let uploadedPaths = [];
+        let attachmentUploadFailed = false;
+        if (attachments.length > 0) {
+            const ticketNo = String(formData.get('ticketNo')).replace(/[^a-zA-Z0-9_-]/g, '_');
+            try {
+                const uploadResults = await Promise.all(attachments.map(async file => {
+                    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                    const path = `${ticketNo}/${Date.now()}-${safeName}`;
+                    const { error: uploadError } = await db.storage
+                        .from('ticket-attachments')
+                        .upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+                    if (uploadError) throw new Error(`${file.name}: ${uploadError.message}`);
+                    return { path, file };
+                }));
+                const { error: metadataError } = await db.from('ticket_attachments').insert(uploadResults.map(({ path, file }) => ({
+                    ticket_no: Number(formData.get('ticketNo')),
+                    storage_path: path,
+                    original_name: file.name,
+                    content_type: file.type || 'application/octet-stream',
+                    file_size: file.size,
+                })));
+                if (metadataError) throw new Error(`Attachment record: ${metadataError.message}`);
+                uploadedPaths = uploadResults.map(({ path }) => path);
+            } catch (uploadError) {
+                attachmentUploadFailed = true;
+                console.error('Attachment Upload Error:', uploadError.message);
+            }
+        }
+
+        showToast(attachmentUploadFailed ? '✓ TICKET SAVED; ATTACHMENT UPLOAD FAILED' : '✓ UPLOAD COMPLETE', attachmentUploadFailed);
         logAudit('TICKET_CREATED', `New ticket submitted via form`, 'ticket');
-        writeAuditLog('TICKET_CREATED', `New ticket #${formData.get('ticketNo')} created for ${(formData.get('name')||'UNKNOWN').toUpperCase()} — Branch: ${formData.get('branch')||'N/A'}, Status: ${formData.get('status')||'PENDING'}`);
+        const attachmentNote = uploadedPaths.length > 0 ? ` Attachments: ${uploadedPaths.join(', ')}` : '';
+        writeAuditLog('TICKET_CREATED', `New ticket #${formData.get('ticketNo')} created for ${(formData.get('name')||'UNKNOWN').toUpperCase()} — Branch: ${formData.get('branch')||'N/A'}, Status: ${formData.get('status')||'PENDING'}.${attachmentNote}`);
         pushNotif('✓ New ticket uploaded successfully', 'info');
         form.reset();
         updateDateInput();

@@ -3,7 +3,7 @@
                     <div class="page-title">PERFORMANCE MONITOR</div>
                     <div class="page-subtitle">CCS Daily Monitoring Module</div>
                 </div>
-                <div style="display:flex; align-items:center; gap:10px;">
+                <div class="dashboard-header-actions">
                     <div id="loading-state" class="hidden">
                         <div id="loading-indicator">
                             <div class="spinner"></div>
@@ -24,75 +24,75 @@
                 <button class="filter-chip chip-red" data-filter="critical" onclick="applyFilter('critical', this)">CRITICAL</button>
                 <button class="filter-chip" data-filter="today" onclick="applyFilter('today', this)">TODAY</button>
                 <button class="filter-chip" data-filter="resolved" onclick="applyFilter('resolved', this)">RESOLVED</button>
-                <span style="margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);" id="filter-count-label"></span>
+                <span class="filter-count-label" id="filter-count-label"></span>
             </div>
 
             <div class="stats-grid">
-                <div class="card stat-card" style="--stripe-color:var(--text-muted);">
+                <div class="card stat-card stripe-muted">
                     <div class="label">Total Tickets</div>
                     <div class="stat-num" id="stat-total">0</div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--accent);">
+                <div class="card stat-card stripe-accent">
                     <div class="label">Resolved</div>
-                    <div class="stat-num" id="stat-resolved" style="color:var(--accent);">0</div>
+                    <div class="stat-num text-accent" id="stat-resolved">0</div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--orange);">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="card stat-card stripe-orange">
+                    <div class="stat-heading-row">
                         <span class="label">Active Pending</span>
-                        <button onclick="showPage('summary')" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:none;border:none;cursor:pointer;letter-spacing:0.08em; transition: opacity 0.15s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">VIEW →</button>
+                        <button onclick="showPage('summary')" class="stat-view-link">VIEW →</button>
                     </div>
-                    <div class="stat-num" id="stat-pending" style="color:var(--orange);">0</div>
+                    <div class="stat-num text-orange" id="stat-pending">0</div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--blue);">
+                <div class="card stat-card stripe-blue">
                     <div class="label">Avg Resolution Time</div>
-                    <div class="stat-num" id="stat-tat" style="color:var(--blue);">0h</div>
+                    <div class="stat-num text-blue" id="stat-tat">0h</div>
                 </div>
             </div>
             <!-- Extended KPI row (2 extras) -->
-            <div class="stats-grid" style="margin-bottom:16px;">
-                <div class="card stat-card" style="--stripe-color:var(--accent);">
+            <div class="stats-grid extended-stats-grid">
+                <div class="card stat-card stripe-accent">
                     <div class="label">SLA Compliance</div>
-                    <div class="stat-num" id="stat-sla" style="color:var(--accent);">--%</div>
+                    <div class="stat-num text-accent" id="stat-sla">--%</div>
                     <div class="kpi-trend kpi-up" id="stat-sla-trend"></div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--red);">
+                <div class="card stat-card stripe-red">
                     <div class="label">Critical Open</div>
-                    <div class="stat-num" id="stat-critical" style="color:var(--red);">0</div>
+                    <div class="stat-num text-red" id="stat-critical">0</div>
                     <div class="kpi-trend" id="stat-critical-trend"></div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--purple);">
+                <div class="card stat-card stripe-purple">
                     <div class="label">Channel: App</div>
-                    <div class="stat-num" id="stat-app" style="color:var(--purple);">0</div>
+                    <div class="stat-num text-purple" id="stat-app">0</div>
                 </div>
-                <div class="card stat-card" style="--stripe-color:var(--yellow);">
+                <div class="card stat-card stripe-yellow">
                     <div class="label">Escalated</div>
-                    <div class="stat-num" id="stat-escalated" style="color:var(--yellow);">0</div>
+                    <div class="stat-num text-yellow" id="stat-escalated">0</div>
                 </div>
             </div>
 
             <div class="charts-grid">
-                <div class="card">
+                <div class="card branch-chart-card">
                     <div class="card-header">
                         <div class="dot dot-green"></div>
                         <span class="label">Branch Volume</span>
                     </div>
-                    <div style="padding:20px; height:360px;">
+                    <div class="chart-panel">
                         <canvas id="branchChart"></canvas>
                     </div>
                 </div>
 
-                <div class="card" style="display:flex; flex-direction:column;">
-                    <div class="card-header" style="justify-content:space-between; flex-wrap:wrap; gap:8px;">
-                        <div style="display:flex;align-items:center;gap:8px;">
+                <div class="card live-database-card">
+                    <div class="card-header live-database-header">
+                        <div class="live-database-title">
                             <div class="dot dot-amber"></div>
                             <span class="label">Live Database</span>
                         </div>
-                        <div class="search-wrap" style="width:180px;">
+                        <div class="search-wrap dashboard-search-wrap">
                             <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <input type="text" id="tableSearch" class="input" placeholder="Name or ticket #..." onkeyup="filterDashboardTable()" style="padding:6px 10px 6px 28px !important; font-size:11px;">
+                            <input type="text" id="tableSearch" class="input dashboard-search-input" placeholder="Name or ticket #..." onkeyup="filterDashboardTable()">
                         </div>
                     </div>
-                    <div class="table-wrap" style="flex:1; max-height:340px; overflow-y:auto;">
+                    <div class="table-wrap dashboard-table-wrap">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -100,7 +100,7 @@
                                     <th>Client</th>
                                     <th>Branch</th>
                                     <th>Severity</th>
-                                    <th style="text-align:right;">Status</th>
+                                    <th class="status-heading">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="daily-report-body"></tbody>
@@ -108,22 +108,22 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card engagement-chart-card">
                     <div class="card-header">
                         <div class="dot dot-green"></div>
                         <span class="label">Type of Engagement</span>
                     </div>
-                    <div style="padding:20px; height:360px;">
+                    <div class="chart-panel">
                         <canvas id="engagementChart"></canvas>
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card ticket-chart-card">
                     <div class="card-header">
                         <div class="dot dot-red"></div>
                         <span class="label">Ticket Type Breakdown</span>
                     </div>
-                    <div style="padding:20px; height:360px;">
+                    <div class="chart-panel">
                         <canvas id="ticketChart"></canvas>
                     </div>
                 </div>

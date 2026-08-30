@@ -672,9 +672,67 @@ function openTicketModal(ticketNo) {
 
     // Interaction notes
     renderModalNotes(ticketNo);
+    renderTicketAttachments(ticketNo);
     if (modal) modal.classList.add('open');
     logAudit('TICKET_VIEWED', `Ticket #${ticketNo} — ${(t.Name||'---').toUpperCase()} opened for review`, 'ticket');
     writeAuditLog('TICKET_VIEWED', `Ticket #${ticketNo} (${(t.Name||'---').toUpperCase()}) opened by ${localStorage.getItem('username')||'UNKNOWN'}`);
+}
+
+async function renderTicketAttachments(ticketNo) {
+    const container = document.getElementById('modal-attachments');
+    if (!container) return;
+    const requestedTicketNo = String(ticketNo);
+    container.innerHTML = '<div class="attachment-empty">LOADING FILES...</div>';
+
+    const { data, error } = await db
+        .from('ticket_attachments')
+        .select('storage_path, original_name, content_type, file_size')
+        .eq('ticket_no', ticketNo)
+        .order('uploaded_at', { ascending: false });
+
+    if (error) {
+        if (!currentTicket || String(currentTicket.TicketNo) !== requestedTicketNo) return;
+        console.error('Attachment List Error:', error.message);
+        container.innerHTML = '<div class="attachment-empty">FILES UNAVAILABLE</div>';
+        return;
+    }
+    if (!currentTicket || String(currentTicket.TicketNo) !== requestedTicketNo) return;
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="attachment-empty">NO FILES SUBMITTED</div>';
+        return;
+    }
+
+    const links = await Promise.all(data.map(async file => {
+        const { data: viewUrl, error: viewError } = await db.storage
+            .from('ticket-attachments')
+            .createSignedUrl(file.storage_path, 3600);
+        const { data: downloadUrl, error: downloadError } = await db.storage
+            .from('ticket-attachments')
+            .createSignedUrl(file.storage_path, 3600, { download: file.original_name });
+        return {
+            file,
+            viewUrl: viewError ? null : viewUrl?.signedUrl,
+            downloadUrl: downloadError ? null : downloadUrl?.signedUrl,
+        };
+    }));
+    if (!currentTicket || String(currentTicket.TicketNo) !== requestedTicketNo) return;
+
+    container.innerHTML = links.map(({ file, viewUrl, downloadUrl }) => {
+        const name = escapeHtml(file.original_name || 'Unnamed file');
+        const size = formatFileSize(file.file_size);
+        if (!viewUrl || !downloadUrl) return `<div class="attachment-item"><span>${name}</span><span class="attachment-unavailable">UNAVAILABLE</span></div>`;
+        return `<div class="attachment-item">
+            <span class="attachment-name" title="${name}">${name}<small>${size}</small></span>
+            <span class="attachment-actions"><a href="${viewUrl}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">VIEW</a><a href="${downloadUrl}" class="btn btn-primary btn-sm" download>DOWNLOAD</a></span>
+        </div>`;
+    }).join('');
+}
+
+function formatFileSize(bytes) {
+    const size = Number(bytes) || 0;
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function closeTicketModal() {

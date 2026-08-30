@@ -1,0 +1,16 @@
+.optional-label {
+	color: var(--text-muted);
+	font-weight: 400;
+}
+
+.file-input {
+	padding: 8px;
+	cursor: pointer;
+}
+
+.file-help {
+	margin: 5px 0 0;
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+	font-size: 9px;
+}

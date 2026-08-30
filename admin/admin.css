@@ -1,3 +1,36 @@
+/* ── Fit admin card to screen ── */
+#page-admin {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 112px);
+    min-height: 0;
+    overflow: hidden;
+}
+#page-admin .page-header { flex-shrink: 0; }
+#page-admin > .card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+#admin-panel-users,
+#admin-panel-audit {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+#admin-panel-users > .table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+#audit-log-container { flex: 1; min-height: 0; }
+@media (max-width: 480px) {
+    #page-admin { height: auto; overflow: visible; }
+}
+
 /* ── Admin Tab Switcher ── */
 .admin-tab {
     display: flex; align-items: center; gap: 8px;

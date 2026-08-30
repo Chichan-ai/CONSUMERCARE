@@ -3,7 +3,7 @@
                 <div class="page-subtitle">Submit a new support ticket</div>
             </div>
 
-            <div class="card" style="max-width:900px;">
+            <div class="card" style="max-width:100%;">
                 <div class="card-header">
                     <div class="dot dot-green"></div>
                     <span class="label">Ticket Form</span>
@@ -14,31 +14,31 @@
                         <div class="section-heading">Tracking Info</div>
                         <div class="form-grid-3">
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Ticket No</div>
-                                <input type="text" required id="ticketNoInput" name="ticketNo" class="input">
+                                <label class="label" for="ticketNoInput" style="margin-bottom:7px;">Ticket No</label>
+                                <input type="text" required id="ticketNoInput" name="ticketNo" class="input" title="Ticket number">
                                 <p style="font-family:var(--font-mono); font-size:9px; margin-top:5px; color:var(--text-muted);">
                                     LAST: <span id="last-ticket-hint">...</span>
                                 </p>
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Ticket Tagging</div>
-                                <input type="text" required name="ticketTagging" class="input">
+                                <label class="label" for="ticketTaggingInput" style="margin-bottom:7px;">Ticket Tagging</label>
+                                <input type="text" required id="ticketTaggingInput" name="ticketTagging" class="input" title="Ticket tagging">
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Date/Time Issued</div>
-                                <input type="datetime-local" required name="dateIssued" id="dateIssuedInput" class="input">
+                                <label class="label" for="dateIssuedInput" style="margin-bottom:7px;">Date/Time Issued</label>
+                                <input type="datetime-local" required name="dateIssued" id="dateIssuedInput" class="input" title="Date and time issued">
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Date/Time Pickup</div>
-                                <input type="datetime-local" required name="datePickedUp" class="input">
+                                <label class="label" for="datePickedUpInput" style="margin-bottom:7px;">Date/Time Pickup</label>
+                                <input type="datetime-local" required id="datePickedUpInput" name="datePickedUp" class="input" title="Date and time picked up">
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Date/Time Reply</div>
-                                <input type="datetime-local" required name="dateReplied" class="input">
+                                <label class="label" for="dateRepliedInput" style="margin-bottom:7px;">Date/Time Reply</label>
+                                <input type="datetime-local" required id="dateRepliedInput" name="dateReplied" class="input" title="Date and time replied">
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Ticket Status</div>
-                                <select name="status" required class="input">
+                                <label class="label" for="statusInput" style="margin-bottom:7px;">Ticket Status</label>
+                                <select name="status" id="statusInput" required class="input" title="Ticket status">
                                     <option value="">Select Status</option>
                                     <option>PENDING</option>
                                     <option>RESOLVED</option>
@@ -51,12 +51,12 @@
                         <div class="section-heading">Client Info</div>
                         <div class="form-grid-3">
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Customer Name</div>
-                                <input type="text" name="name" required class="input">
+                                <label class="label" for="customerNameInput" style="margin-bottom:7px;">Customer Name</label>
+                                <input type="text" name="name" id="customerNameInput" required class="input" title="Customer name">
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Branch</div>
-                                <select name="branch" required class="input">
+                                <label class="label" for="branchInput" style="margin-bottom:7px;">Branch</label>
+                                <select name="branch" id="branchInput" required class="input" title="Branch">
                                     <option value="">Select Branch</option>
                                     <option>BACOLOD</option><option>BACLARAN</option><option>BALER</option>
                                     <option>BALIWAG</option><option>BAMBANG</option><option>BANTAY</option>
@@ -76,8 +76,8 @@
                                 </select>
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Channel</div>
-                                <select name="channel" required class="input">
+                                <label class="label" for="channelInput" style="margin-bottom:7px;">Channel</label>
+                                <select name="channel" id="channelInput" required class="input" title="Channel">
                                     <option value="">Select Channel</option>
                                     <option>HEIMDALL</option><option>EMAIL</option><option>CHATBOT</option>
                                     <option>WALKIN</option><option>VIBER</option><option>MOBILE APP</option>
@@ -90,8 +90,13 @@
                         <div class="section-heading">Ticket Info</div>
                         <div class="form-grid-3">
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Type of Ticket</div>
-                                <select name="type" required class="input">
+                                <label class="label" for="ticketAttachments" style="margin-bottom:7px;">Client Files <span class="optional-label">(Optional)</span></label>
+                                <input type="file" name="attachments" id="ticketAttachments" class="input file-input" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" title="Client files">
+                                <p class="file-help">Up to 10 MB per file</p>
+                            </div>
+                            <div>
+                                <label class="label" for="typeInput" style="margin-bottom:7px;">Type of Ticket</label>
+                                <select name="type" id="typeInput" required class="input" title="Type of ticket">
                                     <option value="">Select Type</option>
                                     <option>DEPOSIT CONCERNS</option>
                                     <option>LOAN CONCERNS</option>
@@ -102,35 +107,37 @@
                                 </select>
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Type of Engagement</div>
-                                <select name="engagement" required class="input">
+                                <label class="label" for="engagementInput" style="margin-bottom:7px;">Type of Engagement</label>
+                                <select name="engagement" id="engagementInput" required class="input" title="Type of engagement">
                                     <option value="">Select Type</option>
                                     <option>CONCERN</option><option>REQUEST</option><option>QUERY</option>
                                     <option>COMPLAINT</option><option>ISSUE</option><option>OTHERS</option>
                                 </select>
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Severity Level</div>
-                                <select name="severity" required class="input" style="border-left:2px solid rgba(255,68,68,0.4) !important;">
+                                <label class="label" for="severityInput" style="margin-bottom:7px;">Severity Level</label>
+                                <select name="severity" id="severityInput" required class="input" title="Severity level" style="border-left:2px solid rgba(255,68,68,0.4) !important;">
                                     <option value="">Select Level</option>
                                     <option>CRITICAL</option><option>HIGH</option>
                                     <option>MODERATE</option><option>LOW</option>
                                 </select>
                             </div>
                             <div>
-                                <div class="label" style="margin-bottom:7px;">Client Concern</div>
-                                <textarea name="concerns" required class="input" style="height:100px; resize:vertical;" placeholder="Describe the issue..."></textarea>
-                            </div>
-                            <div>
-                                <div class="label" style="margin-bottom:7px;">Assistance Provided</div>
-                                <textarea name="assistance" required class="input" style="height:100px; resize:vertical;" placeholder="Details of help given..."></textarea>
-                            </div>
-                            <div>
-                                <div class="label" style="margin-bottom:7px;">Action Taken</div>
-                                <select name="action" required class="input">
+                                <label class="label" for="actionInput" style="margin-bottom:7px;">Action Taken</label>
+                                <select name="action" id="actionInput" required class="input" title="Action taken">
                                     <option value="">Select Action</option>
                                     <option>ACCOMMODATED</option><option>ENDORSED</option><option>ESCALATED</option>
                                 </select>
+                            </div>
+                            <div style="grid-column: 1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                                <div>
+                                    <label class="label" for="concernsInput" style="margin-bottom:7px;">Client Concern</label>
+                                    <textarea name="concerns" id="concernsInput" required class="input" style="height:100px; resize:vertical;" placeholder="Describe the issue..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="label" for="assistanceInput" style="margin-bottom:7px;">Assistance Provided</label>
+                                    <textarea name="assistance" id="assistanceInput" required class="input" style="height:100px; resize:vertical;" placeholder="Details of help given..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>

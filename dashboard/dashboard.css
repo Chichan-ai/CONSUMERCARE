@@ -1,3 +1,52 @@
+.dashboard-header-actions,
+.stat-heading-row,
+.live-database-title {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-header-actions { gap: 10px; }
+.filter-count-label { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+.stat-heading-row { justify-content: space-between; }
+.stat-view-link { font-family: var(--font-mono); font-size: 9px; color: var(--accent); background: none; border: none; cursor: pointer; letter-spacing: 0.08em; transition: opacity 0.15s; }
+.stat-view-link:hover { opacity: 0.7; }
+.extended-stats-grid { margin-bottom: 16px; }
+.chart-panel { padding: 20px; height: 360px; }
+.live-database-card { display: flex; flex-direction: column; }
+.branch-chart-card { display: flex; flex-direction: column; }
+.branch-chart-card .chart-panel { flex: 1; height: auto; min-height: 200px; }
+.engagement-chart-card { display: flex; flex-direction: column; }
+.engagement-chart-card .chart-panel,
+.ticket-chart-card .chart-panel { flex: 1; height: auto; min-height: 200px; }
+.ticket-chart-card { display: flex; flex-direction: column; }
+
+/* ── Full-screen layouts ── */
+@media (min-width: 1400px) {
+    .charts-grid { grid-template-columns: repeat(2, 1fr); }
+    .branch-chart-card,
+    .engagement-chart-card { grid-column: span 1; }
+    .live-database-card,
+    .ticket-chart-card { grid-column: span 1; }
+}
+.live-database-header { justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.live-database-title { gap: 8px; }
+.dashboard-search-wrap { width: 180px; }
+.dashboard-search-input { padding: 6px 10px 6px 28px !important; font-size: 11px; }
+.dashboard-table-wrap { flex: 1; max-height: 340px; overflow-y: auto; }
+.status-heading { text-align: right; }
+.stripe-muted { --stripe-color: var(--text-muted); }
+.stripe-accent { --stripe-color: var(--accent); }
+.stripe-orange { --stripe-color: var(--orange); }
+.stripe-blue { --stripe-color: var(--blue); }
+.stripe-red { --stripe-color: var(--red); }
+.stripe-purple { --stripe-color: var(--purple); }
+.stripe-yellow { --stripe-color: var(--yellow); }
+.text-accent { color: var(--accent); }
+.text-orange { color: var(--orange); }
+.text-blue { color: var(--blue); }
+.text-red { color: var(--red); }
+.text-purple { color: var(--purple); }
+.text-yellow { color: var(--yellow); }
 /* ── KPI Trend Row ── */
 .kpi-trend {
     display: inline-flex;

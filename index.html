@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consumer Care | DASHBOARD</title>
+    <link rel="icon" href="assets/agribankicon.ico" type="image/x-icon">
 
     <!-- Supabase FIRST -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -109,6 +110,14 @@
             <div class="modal-field" style="margin-top:10px;"><label>Assistance Provided</label><div class="modal-field-val" id="modal-assistance" style="white-space:pre-wrap;">---</div></div>
         </div>
 
+        <!-- Client Attachments -->
+        <div class="modal-section">
+            <div class="label" style="color:var(--accent);margin-bottom:8px;">CLIENT FILES</div>
+            <div id="modal-attachments" class="attachment-list">
+                <div class="attachment-empty">LOADING FILES...</div>
+            </div>
+        </div>
+
         <!-- SLA & Resolution -->
         <div class="modal-section">
             <div class="label" style="color:var(--accent);margin-bottom:8px;">SLA &amp; RESOLUTION</div>
@@ -166,7 +175,7 @@
         <div class="sidebar-brand">
             <!-- Shown when expanded: app icon + name -->
             <div class="sidebar-brand-icon">
-                <img src="D:\Users\Lenovo\Downloads\files\ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" style="width:100px;height:100px;object-fit:contain"/>
+                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100px;height:100px;object-fit:contain"/>
             </div>
             <div class="sidebar-brand-text">
                 <div class="brand-name">CONSUMER<span>CARE</span></div>
