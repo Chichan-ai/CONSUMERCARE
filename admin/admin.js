@@ -327,7 +327,6 @@ function exportAuditLog() {
     XLSX.utils.book_append_sheet(wb, ws, 'Audit Log');
     XLSX.writeFile(wb, `AUDIT_LOG_${new Date().toISOString().split('T')[0]}.xlsx`);
     showToast('✓ AUDIT LOG EXPORTED');
-    logAudit('EXPORT_AUDIT_LOG', `${auditLog.length} events exported`, 'export');
     writeAuditLog('EXPORT_AUDIT_LOG', `In-memory audit log exported — ${auditLog.length} events by ${localStorage.getItem('username')||'UNKNOWN'}`);
 }
 

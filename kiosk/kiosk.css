@@ -1,7 +1,25 @@
-/* ── KM table col min-widths (prevent overflow) ── */
-#km-table th:nth-child(1),#km-table td:nth-child(1) { min-width: 120px; }
-#km-table th:nth-child(2),#km-table td:nth-child(2) { min-width: 100px; }
-#km-table th:nth-child(9),#km-table td:nth-child(9) { min-width: 130px; }
+/* ── Monitoring table: fixed layout so the card fits ── */
+#km-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+}
+#km-table th,
+#km-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#km-table th:nth-child(1), #km-table td:nth-child(1) { width: 13%; }
+#km-table th:nth-child(2), #km-table td:nth-child(2) { width: 10%; }
+#km-table th:nth-child(3), #km-table td:nth-child(3) { width: 10%; }
+#km-table th:nth-child(4), #km-table td:nth-child(4) { width: 10%; }
+#km-table th:nth-child(5), #km-table td:nth-child(5) { width: 5%; }
+#km-table th:nth-child(6), #km-table td:nth-child(6) { width: 8%; }
+#km-table th:nth-child(7), #km-table td:nth-child(7) { width: 9%; }
+#km-table th:nth-child(8), #km-table td:nth-child(8) { width: 10%; }
+#km-table th:nth-child(9), #km-table td:nth-child(9) { width: 15%; }
+#km-table th:nth-child(10), #km-table td:nth-child(10) { width: 10%; }
 
 /* =============================================
    KIOSK MONITORING MODULE — v3.0
@@ -188,13 +206,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-#kioskTable th:nth-child(1), #kioskTable td:nth-child(1) { width: 10%; }
-#kioskTable th:nth-child(2), #kioskTable td:nth-child(2) { width: 20%; }
-#kioskTable th:nth-child(3), #kioskTable td:nth-child(3) { width:  9%; }
-#kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { width: 10%; }
-#kioskTable th:nth-child(5), #kioskTable td:nth-child(5) { width: 27%; }
-#kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { width: 13%; }
-#kioskTable th:nth-child(7), #kioskTable td:nth-child(7) { width: 11%; }
+#kioskTable th:nth-child(1), #kioskTable td:nth-child(1) { width:  8%; }
+#kioskTable th:nth-child(2), #kioskTable td:nth-child(2) { width: 17%; }
+#kioskTable th:nth-child(3), #kioskTable td:nth-child(3) { width:  8%; }
+#kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { width:  9%; }
+#kioskTable th:nth-child(5), #kioskTable td:nth-child(5) { width: 22%; }
+#kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { width: 10%; }
+#kioskTable th:nth-child(7), #kioskTable td:nth-child(7) { width: 10%; }
+#kioskTable th:nth-child(8), #kioskTable td:nth-child(8) { width:  8%; }
+#kioskTable th:nth-child(9), #kioskTable td:nth-child(9) { width:  8%; }
 
 /* ── Compact touch / small-screen behaviour ── */
 @media (max-width: 767px) {
@@ -211,6 +231,9 @@
     .kiosk-search { width: 100%; }
     #kioskTable th:nth-child(4), #kioskTable td:nth-child(4) { display: none; }
     #kioskTable th:nth-child(6), #kioskTable td:nth-child(6) { display: none; }
+    /* Monitoring: hide less-critical columns */
+    #km-table th:nth-child(6), #km-table td:nth-child(6) { display: none; }
+    #km-table th:nth-child(9), #km-table td:nth-child(9) { display: none; }
     /* Monitoring filter inputs stack full-width instead of overflowing */
     #kiosk-panel-monitoring > .card > div {
         flex-direction: column;
@@ -224,5 +247,8 @@
 
 @media (max-width: 480px) {
     #kioskTable th:nth-child(3), #kioskTable td:nth-child(3) { display: none; }
+    /* Monitoring: hide more columns on very small screens */
+    #km-table th:nth-child(3), #km-table td:nth-child(3) { display: none; }
+    #km-table th:nth-child(7), #km-table td:nth-child(7) { display: none; }
 }
 

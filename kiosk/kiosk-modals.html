@@ -109,3 +109,162 @@
         </div>
     </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL: ADD / EDIT KIOSK -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<div id="add-kiosk-modal" onclick="if(event.target===this)closeAddKioskModal()">
+    <div class="monitoring-modal-box">
+        <!-- Header -->
+        <div class="modal-section" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;">
+            <div>
+                <div class="label" style="color:var(--teal);">KIOSK MANAGEMENT</div>
+                <div id="add-kiosk-modal-title" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--text);">ADD NEW KIOSK</div>
+            </div>
+            <button onclick="closeAddKioskModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+        </div>
+
+        <!-- Form -->
+        <form id="add-kiosk-form" onsubmit="submitKioskForm(event)" novalidate>
+            <input type="hidden" id="kiosk-edit-id" value="">
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">TERMINAL INFORMATION</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Terminal ID <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="kiosk-terminal-id" class="input" placeholder="e.g. T-001" required style="text-transform:uppercase;">
+                    </div>
+                    <div class="modal-field">
+                        <label>Location <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="kiosk-location" class="input" placeholder="e.g. SM PASIG" required style="text-transform:uppercase;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">KIOSK DETAILS</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Address <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="kiosk-address" class="input" placeholder="e.g. Unit 123 SM Pasig" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>Go Live Date <span style="color:var(--red);">*</span></label>
+                        <input type="date" id="kiosk-go-live" class="input" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>Operating Hours <span style="color:var(--red);">*</span></label>
+                        <input type="text" id="kiosk-hours" class="input" placeholder="e.g. 10AM-10PM" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>Kiosk Threshold (₱)</label>
+                        <input type="number" id="kiosk-threshold" class="input" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">KIOSK TAG <span style="color:var(--text-muted);font-size:10px;">(Select type of kiosk)</span></div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="radio" name="kiosk-tag" id="kiosk-tag-new" value="new" required style="cursor:pointer;">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--teal);">NEW</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="radio" name="kiosk-tag" id="kiosk-tag-relocation" value="relocation" style="cursor:pointer;">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--orange);">RELOCATION</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
+                <button type="submit" id="kiosk-submit-btn" class="btn btn-primary">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    SAVE KIOSK
+                </button>
+                <button type="button" onclick="closeAddKioskModal()" class="btn btn-ghost">CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL: CHANGE KIOSK STATUS -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<div id="change-status-modal" onclick="if(event.target===this)closeChangeStatusModal()">
+    <div class="monitoring-modal-box">
+        <!-- Header -->
+        <div class="modal-section" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;">
+            <div>
+                <div class="label" style="color:var(--teal);">KIOSK STATUS</div>
+                <div id="change-status-modal-title" style="font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--text);">CHANGE STATUS</div>
+            </div>
+            <button onclick="closeChangeStatusModal()" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--text-dim);font-size:18px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">×</button>
+        </div>
+
+        <!-- Form -->
+        <form id="change-status-form" onsubmit="submitChangeStatusForm(event)" novalidate>
+            <input type="hidden" id="status-kiosk-id" value="">
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">TERMINAL INFORMATION</div>
+                <div class="modal-field-grid">
+                    <div class="modal-field">
+                        <label>Terminal ID</label>
+                        <div class="modal-field-val" id="status-terminal-id" style="padding:8px;background:var(--bg-subtle);border-radius:6px;font-family:var(--font-mono);color:var(--text-muted);">---</div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Location</label>
+                        <div class="modal-field-val" id="status-location" style="padding:8px;background:var(--bg-subtle);border-radius:6px;color:var(--text);">---</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">SELECT NEW STATUS</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;">
+                        <input type="radio" name="status-change" id="status-active" value="ACTIVE" required style="cursor:pointer;" onchange="togglePulloutDate()">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--teal);">ACTIVE</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;">
+                        <input type="radio" name="status-change" id="status-pullout" value="PULL OUT" style="cursor:pointer;" onchange="togglePulloutDate()">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--orange);">PULL OUT</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;">
+                        <input type="radio" name="status-change" id="status-relocated" value="RELOCATED" style="cursor:pointer;" onchange="togglePulloutDate()">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--blue);">RELOCATED</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;">
+                        <input type="radio" name="status-change" id="status-damaged" value="DAMAGED" style="cursor:pointer;" onchange="togglePulloutDate()">
+                        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--red);">DAMAGED</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="modal-section" id="status-pullout-section" style="display:none;">
+                <div class="label" style="color:var(--accent);margin-bottom:12px;">PULL OUT DETAILS</div>
+                <div class="modal-field">
+                    <label>Date Pull Out <span style="color:var(--red);">*</span></label>
+                    <input type="date" id="status-pullout-date" class="input" required>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-field">
+                    <label>Remarks / Notes</label>
+                    <textarea id="status-remarks" class="input" style="height:80px;resize:vertical;" placeholder="Optional notes about this status change..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-section" style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px;">
+                <button type="submit" id="status-submit-btn" class="btn btn-primary">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    UPDATE STATUS
+                </button>
+                <button type="button" onclick="closeChangeStatusModal()" class="btn btn-ghost">CANCEL</button>
+            </div>
+        </form>
+    </div>
+</div>

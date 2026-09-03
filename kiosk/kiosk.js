@@ -19,7 +19,11 @@ function switchKioskTab(tab) {
     // Swap action buttons contextually
     if (actions) {
         if (tab === 'terminals') {
-            actions.innerHTML = '';
+            actions.innerHTML = `
+                <button onclick="openAddKioskModal()" class="btn btn-primary btn-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    ADD KIOSK
+                </button>`;
         } else {
             actions.innerHTML = `
                 <button onclick="openMonitoringModal()" class="btn btn-primary btn-sm">
@@ -59,6 +63,7 @@ async function loadKioskData() {
 
         if (error) throw error;
 
+        allKiosks = kiosks || [];  // Store kiosks for editing
         tbody.innerHTML = '';
         let activeCount = 0;
         const rows = [];
@@ -87,7 +92,14 @@ async function loadKioskData() {
                     <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(k.hours || '---')}</td>
                     <td style="color:var(--text-dim);font-size:12px;" title="${addressSafe}">${addressSafe}</td>
                     <td style="color:var(--text-dim);font-size:12px;">${thresholdTxt}</td>
-                    <td style="text-align:right;"><span class="badge ${badgeClass}">${statusStr}</span></td>
+                    <td style="color:var(--text-dim);font-size:12px;">${k.pullout_date ? String(k.pullout_date).split('T')[0] : '---'}</td>
+                    <td style="text-align:right;"><span class="badge ${badgeClass}" style="cursor:pointer;" onclick="openChangeStatusModal('${k.id}', '${escapeHtml(String(k.terminal_id || ''))}', '${locationSafe}')" title="Click to change status">${statusStr}</span></td>
+                    <td style="text-align:right;white-space:nowrap;padding:8px 12px;">
+                        <button onclick="openEditKioskModal('${k.id}')" class="btn btn-ghost" style="padding:8px 12px;min-height:32px;font-size:10px;display:inline-flex;align-items:center;gap:4px;" title="Edit Kiosk">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            EDIT
+                        </button>
+                    </td>
                 </tr>`);
         });
         tbody.innerHTML = rows.join('');
@@ -111,6 +123,30 @@ function filterKioskTable() {
     const query = input.value.toLowerCase();
     document.querySelectorAll('#tableBody tr').forEach(row => {
         row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+    });
+}
+
+// ── Setup event listeners for kiosk table action buttons ──
+function setupKioskTableEvents() {
+    const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
+
+    // Status button handler
+    tbody.querySelectorAll('button[data-action="status"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const kioskId = this.getAttribute('data-kiosk-id');
+            const terminalId = this.getAttribute('data-terminal-id');
+            const location = this.getAttribute('data-location');
+            openChangeStatusModal(kioskId, terminalId, location);
+        });
+    });
+
+    // Edit button handler
+    tbody.querySelectorAll('button[data-action="edit"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const kioskId = this.getAttribute('data-kiosk-id');
+            openEditKioskModal(kioskId);
+        });
     });
 }
 
@@ -397,7 +433,6 @@ function exportMonitoringExcel() {
     showToast('✓ EXPORTED ' + data.length + ' RECORDS');
     
     // Safe audit logging
-    logAudit('EXPORT_KIOSK_MONITORING', 'Exported ' + data.length + ' maintenance records', 'export');
     writeAuditLog('EXPORT_KIOSK_MONITORING', `Kiosk monitoring exported — ${data.length} records by ${localStorage.getItem('username')||'UNKNOWN'}`);
 }
 
@@ -534,5 +569,256 @@ async function submitKioskMonitoringForm(e) {
     } finally {
         btn.disabled = false;
         btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> SAVE RECORD';
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+// KIOSK MANAGEMENT FUNCTIONS — ADD/EDIT KIOSK & CHANGE STATUS
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// ── Store for kiosk data ──
+let allKiosks = [];
+
+// ── OPEN ADD KIOSK MODAL ──
+function openAddKioskModal(editId = null) {
+    const modal     = document.getElementById('add-kiosk-modal');
+    const title     = document.getElementById('add-kiosk-modal-title');
+    const submitBtn = document.getElementById('kiosk-submit-btn');
+    const editIdEl  = document.getElementById('kiosk-edit-id');
+    if (!modal) return;
+
+    // Reset form
+    document.getElementById('add-kiosk-form').reset();
+    document.getElementById('kiosk-tag-new').checked = true;
+
+    // Set today's date for go-live
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    const dateEl = document.getElementById('kiosk-go-live');
+    if (dateEl) dateEl.value = today.toISOString().split('T')[0];
+
+    if (editId) {
+        const kiosk = allKiosks.find(k => String(k.id) === String(editId));
+        if (!kiosk) {
+            showToast('⚠ KIOSK NOT FOUND', true);
+            return;
+        }
+        document.getElementById('kiosk-terminal-id').value = kiosk.terminal_id || '';
+        document.getElementById('kiosk-location').value = kiosk.location || '';
+        document.getElementById('kiosk-address').value = kiosk.address || '';
+        document.getElementById('kiosk-go-live').value = kiosk.go_live ? kiosk.go_live.split('T')[0] : '';
+        document.getElementById('kiosk-hours').value = kiosk.hours || '';
+        document.getElementById('kiosk-threshold').value = kiosk.kiosk_threshold || '';
+        
+        // Set tag
+        const tag = (kiosk.tag || 'new').toLowerCase();
+        if (tag === 'relocation') {
+            document.getElementById('kiosk-tag-relocation').checked = true;
+        } else {
+            document.getElementById('kiosk-tag-new').checked = true;
+        }
+        
+        editIdEl.value = editId;
+        if (title)     title.textContent    = 'EDIT KIOSK';
+        if (submitBtn) submitBtn.innerHTML  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> UPDATE KIOSK';
+    } else {
+        editIdEl.value = '';
+        if (title)     title.textContent    = 'ADD NEW KIOSK';
+        if (submitBtn) submitBtn.innerHTML  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> SAVE KIOSK';
+    }
+    modal.classList.add('open');
+}
+
+function closeAddKioskModal() {
+    const modal = document.getElementById('add-kiosk-modal');
+    if (modal) modal.classList.remove('open');
+}
+
+// ── OPEN EDIT KIOSK MODAL ──
+function openEditKioskModal(kioskId) {
+    openAddKioskModal(kioskId);
+}
+
+// ── SUBMIT ADD/EDIT KIOSK ──
+async function submitKioskForm(e) {
+    e.preventDefault();
+    const btn     = document.getElementById('kiosk-submit-btn');
+    const editId  = document.getElementById('kiosk-edit-id').value;
+    const terminalId = (document.getElementById('kiosk-terminal-id').value || '').trim().toUpperCase();
+    const location   = (document.getElementById('kiosk-location').value || '').trim().toUpperCase();
+    const address    = (document.getElementById('kiosk-address').value || '').trim();
+    const goLive     = document.getElementById('kiosk-go-live').value;
+    const hours      = (document.getElementById('kiosk-hours').value || '').trim();
+    const threshold  = document.getElementById('kiosk-threshold').value;
+    const tag        = document.querySelector('input[name="kiosk-tag"]:checked')?.value || 'new';
+
+    const errors = [];
+    if (!terminalId) errors.push('Terminal ID');
+    if (!location) errors.push('Location');
+    if (!address) errors.push('Address');
+    if (!goLive) errors.push('Go Live Date');
+    if (!hours) errors.push('Operating Hours');
+    
+    if (errors.length > 0) {
+        showToast('⚠ REQUIRED: ' + errors.join(', '), true);
+        return;
+    }
+
+    const payload = {
+        terminal_id: terminalId,
+        location: location,
+        address: address,
+        go_live: goLive,
+        hours: hours,
+        kiosk_threshold: threshold || null,
+        tag: tag,
+        status: 'ACTIVE'  // Default status for new kiosks
+    };
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:var(--bg);border-color:rgba(0,0,0,0.2);"></div> SAVING...';
+
+    try {
+        if (editId) {
+            const { error } = await db.from('kiosks').update(payload).eq('id', editId);
+            if (error) throw error;
+            showToast('✓ KIOSK UPDATED — ' + terminalId);
+            if (typeof writeAuditLog === 'function') {
+                await writeAuditLog('UPDATE_KIOSK', `Kiosk updated — Terminal: ${terminalId}, Location: ${location}, Tag: ${tag}`);
+            }
+        } else {
+            const { error } = await db.from('kiosks').insert([payload]);
+            if (error) throw error;
+            showToast('✓ KIOSK SAVED — ' + terminalId);
+            if (typeof writeAuditLog === 'function') {
+                await writeAuditLog('CREATE_KIOSK', `New kiosk added — Terminal: ${terminalId}, Location: ${location}, Tag: ${tag}`);
+            }
+        }
+        closeAddKioskModal();
+        await loadKioskData();
+    } catch (err) {
+        console.error('Kiosk Save Error:', err);
+        const errMsg = err.message || err.details || JSON.stringify(err);
+        showToast('✗ SAVE FAILED: ' + errMsg, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> SAVE KIOSK';
+    }
+}
+
+// ── OPEN CHANGE STATUS MODAL ──
+function openChangeStatusModal(kioskId, terminalId, location) {
+    console.log('Opening change status modal for:', kioskId, terminalId, location);
+    const modal = document.getElementById('change-status-modal');
+    if (!modal) {
+        console.error('change-status-modal not found');
+        showToast('⚠ Modal not found. Please refresh page.', true);
+        return;
+    }
+
+    // Reset form
+    const form = document.getElementById('change-status-form');
+    if (form) form.reset();
+    
+    const remarksField = document.getElementById('status-remarks');
+    if (remarksField) remarksField.value = '';
+
+    // Populate read-only fields
+    const idField = document.getElementById('status-kiosk-id');
+    const terminalField = document.getElementById('status-terminal-id');
+    const locationField = document.getElementById('status-location');
+    
+    if (idField) idField.value = kioskId;
+    if (terminalField) terminalField.innerText = terminalId || '---';
+    if (locationField) locationField.innerText = location || '---';
+
+    // Pre-check current status if it is PULL OUT and pre-fill its pullout date
+    const current = allKiosks.find(k => String(k.id) === String(kioskId));
+    const pulloutRadio = document.getElementById('status-pullout');
+    const pulloutDateEl = document.getElementById('status-pullout-date');
+    if (current && String(current.status || '').toUpperCase() === 'PULL OUT') {
+        if (pulloutRadio) pulloutRadio.checked = true;
+        if (pulloutDateEl && current.pullout_date) pulloutDateEl.value = String(current.pullout_date).split('T')[0];
+    }
+    if (typeof togglePulloutDate === 'function') togglePulloutDate();
+
+    console.log('Modal found, opening...');
+    modal.classList.add('open');
+    console.log('Modal opened:', modal.classList.contains('open'));
+}
+
+// ── TOGGLE PULL OUT DATE FIELD (visible only when PULL OUT is selected) ──
+function togglePulloutDate() {
+    const section = document.getElementById('status-pullout-section');
+    const pulloutRadio = document.getElementById('status-pullout');
+    if (!section) return;
+    if (pulloutRadio && pulloutRadio.checked) {
+        section.style.display = 'block';
+        const dateEl = document.getElementById('status-pullout-date');
+        if (dateEl && !dateEl.value) {
+            const today = new Date();
+            today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+            dateEl.value = today.toISOString().split('T')[0];
+        }
+    } else {
+        section.style.display = 'none';
+    }
+}
+
+function closeChangeStatusModal() {
+    const modal = document.getElementById('change-status-modal');
+    if (modal) modal.classList.remove('open');
+}
+
+// ── SUBMIT CHANGE STATUS ──
+async function submitChangeStatusForm(e) {
+    e.preventDefault();
+    const btn     = document.getElementById('status-submit-btn');
+    const kioskId = document.getElementById('status-kiosk-id').value;
+    const newStatus = document.querySelector('input[name="status-change"]:checked')?.value;
+    const remarks = (document.getElementById('status-remarks').value || '').trim();
+
+    if (!newStatus) {
+        showToast('⚠ SELECT A STATUS', true);
+        return;
+    }
+
+    const pulloutDate = newStatus === 'PULL OUT' ? (document.getElementById('status-pullout-date').value || '') : '';
+    if (newStatus === 'PULL OUT' && !pulloutDate) {
+        showToast('⚠ PULL OUT DATE REQUIRED', true);
+        return;
+    }
+
+    const terminalId = document.getElementById('status-terminal-id').innerText;
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:13px;height:13px;border-width:2px;border-top-color:var(--bg);border-color:rgba(0,0,0,0.2);"></div> UPDATING...';
+
+    try {
+        const payload = {
+            status: newStatus,
+            status_remarks: remarks || null,
+            status_change_date: new Date().toISOString(),
+            pullout_date: newStatus === 'PULL OUT' ? pulloutDate : null
+        };
+
+        const { error } = await db.from('kiosks').update(payload).eq('id', kioskId);
+        if (error) throw error;
+
+        showToast('✓ STATUS UPDATED — ' + terminalId + ' is now ' + newStatus);
+        
+        if (typeof writeAuditLog === 'function') {
+            await writeAuditLog('UPDATE_KIOSK_STATUS', `Kiosk status changed to ${newStatus} for terminal ${terminalId}${remarks ? ' — Notes: ' + remarks : ''}`);
+        }
+        
+        closeChangeStatusModal();
+        await loadKioskData();
+    } catch (err) {
+        console.error('Status Update Error:', err);
+        const errMsg = err.message || err.details || JSON.stringify(err);
+        showToast('✗ UPDATE FAILED: ' + errMsg, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> UPDATE STATUS';
     }
 }

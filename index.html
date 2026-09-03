@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consumer Care | DASHBOARD</title>
-    <meta name="theme-color" id="meta-theme-color" content="#f0f4f8">
     <link rel="icon" href="assets/agribankicon.ico" type="image/x-icon">
 
     <!-- Apply saved/system theme before first paint → no flash of wrong theme -->
@@ -41,6 +40,7 @@
     <link rel="stylesheet" href="dashboard/dashboard.css">
     <link rel="stylesheet" href="summary/summary.css">
     <link rel="stylesheet" href="report/report.css">
+    <link rel="stylesheet" href="reports/reports.css">
     <link rel="stylesheet" href="kiosk/kiosk.css">
     <link rel="stylesheet" href="analytics/analytics.css">
     <link rel="stylesheet" href="admin/admin.css">
@@ -209,6 +209,10 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                 <span class="nav-label">SUMMARY REPORT</span>
             </button>
+            <button type="button" onclick="showPage('reports')" id="nav-reports" class="nav-btn" data-tooltip="REPORTS">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+                <span class="nav-label">REPORTS</span>
+            </button>
             <button type="button" onclick="showPage('report')" id="nav-report" class="nav-btn" data-tooltip="NEW ENTRY">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 <span class="nav-label">NEW ENTRY</span>
@@ -258,6 +262,9 @@
         <!-- ======= SUMMARY PAGE (loaded from summary/summary.html) ======= -->
         <section id="page-summary" class="hidden"></section>
 
+        <!-- ======= REPORTS PAGE (loaded from reports/reports.html) ======= -->
+        <section id="page-reports" class="hidden"></section>
+
         <!-- ======= NEW ENTRY PAGE (loaded from report/report.html) ======= -->
         <section id="page-report" class="hidden"></section>
 
@@ -295,6 +302,7 @@
 <script src="dashboard/dashboard.js"></script>
 <script src="summary/summary.js"></script>
 <script src="report/report.js"></script>
+<script src="reports/reports.js"></script>
 <script src="kiosk/kiosk.js"></script>
 <script src="analytics/analytics.js"></script>
 <script src="admin/admin.js"></script>

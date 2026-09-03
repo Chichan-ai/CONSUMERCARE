@@ -231,7 +231,6 @@ function downloadAnalyticsPDF() {
         <script>setTimeout(()=>window.print(),600)</scr`+'ipt></body></html>');
     w.document.close();
     showToast('✓ PDF REPORT GENERATED');
-    logAudit('EXPORT_PDF_REPORT', `Analytics report generated — ${total} tickets`, 'export');
 }
 
 // =============================================

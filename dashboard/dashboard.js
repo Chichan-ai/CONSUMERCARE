@@ -46,6 +46,20 @@ function renderDashboard(data) {
     if (analyticsPage && !analyticsPage.classList.contains('hidden')) renderAnalytics();
 }
 
+function viewPendingTickets() {
+    showPage('dashboard');
+    const pendingFilter = document.querySelector('.filter-chip[data-filter="pending"]');
+    applyFilter('pending', pendingFilter);
+    document.querySelector('.live-database-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showAllTickets() {
+    showPage('dashboard');
+    const allFilter = document.querySelector('.filter-chip[data-filter="all"]');
+    applyFilter('all', allFilter);
+    document.querySelector('.live-database-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function populateTable(dataToDisplay) {
     const reportBody = document.getElementById('daily-report-body');
     if (!reportBody) return;
@@ -271,7 +285,6 @@ function downloadExcel() {
         XLSX.writeFile(wb, filename);
 
         showToast(`✓ EXPORTED ${totalTickets} RECORDS`);
-        logAudit('EXPORT_EXCEL', `${totalTickets} tickets exported to ${filename}`, 'export');
         addLog(`EXPORT_SUCCESS: ${totalTickets} rows → ${filename}`);
         writeAuditLog('EXPORT_EXCEL', `${totalTickets} tickets exported to ${filename} by ${localStorage.getItem('username')||'UNKNOWN'}`);
 

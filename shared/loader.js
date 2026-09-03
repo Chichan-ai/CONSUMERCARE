@@ -15,6 +15,7 @@ const MODULE_PARTIALS = [
     { id: 'login-section',      url: 'login/login.html' },
     { id: 'page-dashboard',     url: 'dashboard/dashboard.html' },
     { id: 'page-summary',       url: 'summary/summary.html' },
+    { id: 'page-reports',       url: 'reports/reports.html' },
     { id: 'page-report',        url: 'report/report.html' },
     { id: 'page-kiosk',         url: 'kiosk/kiosk.html' },
     { id: 'kiosk-modals-root',  url: 'kiosk/kiosk-modals.html' },

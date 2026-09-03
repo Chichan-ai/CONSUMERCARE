@@ -1270,6 +1270,52 @@ body.sidebar-expanded #top-bar {
     animation: fadeIn 0.15s ease;
 }
 #ticket-modal.open { display: flex; }
+
+/* ── Monitoring Modal (Kiosk Maintenance) ── */
+#monitoring-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.15s ease;
+}
+#monitoring-modal.open { display: flex; }
+
+/* ── Add Kiosk Modal ── */
+#add-kiosk-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.15s ease;
+}
+#add-kiosk-modal.open { display: flex; }
+
+/* ── Change Status Modal ── */
+#change-status-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.15s ease;
+}
+#change-status-modal.open { display: flex; }
+
 .ticket-modal-box {
     background: var(--surface-overlay);
     backdrop-filter: var(--blur-lg);

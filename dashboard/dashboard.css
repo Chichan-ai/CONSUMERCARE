@@ -8,17 +8,21 @@
 .dashboard-header-actions { gap: 10px; }
 .filter-count-label { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
 .stat-heading-row { justify-content: space-between; }
-.stat-view-link { font-family: var(--font-mono); font-size: 9px; color: var(--accent); background: none; border: none; cursor: pointer; letter-spacing: 0.08em; transition: opacity 0.15s; }
+.stat-view-link { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.08em; transition: opacity 0.15s; }
 .stat-view-link:hover { opacity: 0.7; }
+.pending-stat-card { cursor: pointer; }
 .extended-stats-grid { margin-bottom: 16px; }
-.chart-panel { padding: 20px; height: 360px; }
-.live-database-card { display: flex; flex-direction: column; }
-.branch-chart-card { display: flex; flex-direction: column; }
-.branch-chart-card .chart-panel { flex: 1; height: auto; min-height: 200px; }
-.engagement-chart-card { display: flex; flex-direction: column; }
-.engagement-chart-card .chart-panel,
-.ticket-chart-card .chart-panel { flex: 1; height: auto; min-height: 200px; }
-.ticket-chart-card { display: flex; flex-direction: column; }
+
+/* All chart cards: same flex structure so the grid gives them equal height */
+.chart-panel { padding: 20px; flex: 1; height: auto; min-height: 200px; }
+.live-database-card,
+.branch-chart-card,
+.engagement-chart-card,
+.ticket-chart-card {
+    display: flex;
+    flex-direction: column;
+}
+.live-database-card .dashboard-table-wrap { flex: 1; max-height: 340px; overflow-y: auto; }
 
 /* ── Full-screen layouts ── */
 @media (min-width: 1400px) {
@@ -28,8 +32,8 @@
     .live-database-card,
     .ticket-chart-card { grid-column: span 1; }
 }
-.live-database-header { justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-.live-database-title { gap: 8px; }
+.live-database-header { justify-content: flex-start; flex-wrap: wrap; gap: 4px; }
+.live-database-title { gap: 8px; margin-right: auto; }
 .dashboard-search-wrap { width: 180px; }
 .dashboard-search-input { padding: 6px 10px 6px 28px !important; font-size: 11px; }
 .dashboard-table-wrap { flex: 1; max-height: 340px; overflow-y: auto; }
@@ -171,7 +175,7 @@
     .dashboard-search-wrap { width: 100%; }
     .dashboard-header-actions { width: 100%; justify-content: space-between; }
     /* Charts sized for phones */
-    #page-dashboard .chart-panel { height: 230px; padding: 12px 10px; }
+    #page-dashboard .chart-panel { min-height: 230px; padding: 12px 10px; }
     /* Live Database keeps readable columns via horizontal scroll */
     #page-dashboard .live-database-card .data-table { min-width: 600px; }
     #page-dashboard .live-database-card .dashboard-table-wrap { overflow-x: auto; }

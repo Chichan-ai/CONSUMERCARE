@@ -127,7 +127,11 @@ function initializeAppData() {
     showPage(restoredPage);
 
     loadData();
-    loadKioskData();
+    if ((localStorage.getItem('userRole') || '').toUpperCase() === 'ADMIN') {
+        loadKioskData();
+        loadPendingStatusApprovals();
+        setInterval(loadPendingStatusApprovals, 30000);
+    }
 
     const ticketForm = document.getElementById('ticketForm');
     if (ticketForm) ticketForm.onsubmit = handleFormSubmit;
@@ -153,14 +157,14 @@ function checkAdminAccess() {
     const isAdmin    = storedRole === 'ADMIN';
 
     // Show/hide admin-only nav items based purely on stored role
-    ['nav-admin', 'nav-audit', 'nav-analytics'].forEach(id => {
+    ['nav-kiosk', 'nav-admin', 'nav-audit', 'nav-analytics'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.toggle('hidden', !isAdmin);
     });
 
     // Guard: redirect encoder away from admin-only pages
     const currentPage = localStorage.getItem('activePage') || 'dashboard';
-    if (!isAdmin && ['admin', 'audit', 'analytics'].includes(currentPage)) {
+    if (!isAdmin && ['kiosk', 'admin', 'audit', 'analytics'].includes(currentPage)) {
         localStorage.setItem('activePage', 'dashboard');
     }
     return isAdmin;
@@ -237,21 +241,26 @@ function toggleTheme() {
 }
 
 function showPage(page) {
+    const isAdmin = (localStorage.getItem('userRole') || '').toUpperCase() === 'ADMIN';
+
     // Route kiosk-monitoring into the kiosk page as a tab
     if (page === 'kiosk-monitoring') {
+        if (!isAdmin) {
+            showPage('dashboard');
+            return;
+        }
         showPage('kiosk');
         switchKioskTab('monitoring');
         return;
     }
 
     // Guard: admin-only pages — fall back to dashboard for encoders
-    const isAdmin = (localStorage.getItem('userRole') || '').toUpperCase() === 'ADMIN';
-    const adminOnlyPages = ['admin', 'audit', 'analytics'];
+    const adminOnlyPages = ['kiosk', 'admin', 'audit', 'analytics'];
     if (adminOnlyPages.includes(page) && !isAdmin) page = 'dashboard';
 
     localStorage.setItem('activePage', page);
     sessionStorage.setItem('activePage', page);
-    ['dashboard','summary','report','kiosk','analytics','audit','admin'].forEach(p => {
+    ['dashboard','summary','reports','report','kiosk','analytics','audit','admin'].forEach(p => {
         const pageEl = document.getElementById(`page-${p}`);
         const navEl  = document.getElementById(`nav-${p}`);
         if (pageEl) pageEl.classList.toggle('hidden', p !== page);
@@ -259,6 +268,7 @@ function showPage(page) {
     });
 
     if (page === 'report')     updateDateInput();
+    if (page === 'reports' && typeof renderReportTable === 'function') renderReportTable([]);
     if (page === 'kiosk') {
         // Restore last active kiosk tab (default: terminals)
         const savedTab = sessionStorage.getItem('kioskTab') || 'terminals';
@@ -399,6 +409,10 @@ async function loadData() {
 // UPDATE TICKET STATUS
 // =============================================
 async function updateTicketStatus(ticketNo, newStatus) {
+    if ((localStorage.getItem('userRole') || '').toUpperCase() !== 'ADMIN') {
+        await requestTicketStatusChange(ticketNo, newStatus);
+        return;
+    }
     showToast('UPDATING...');
     try {
         const { error } = await db
@@ -421,7 +435,6 @@ async function updateTicketStatus(ticketNo, newStatus) {
         renderDashboard(cachedTickets);
         updateSummary(cachedTickets);
         showToast(`✓ STATUS → ${newStatus.toUpperCase()}`);
-        logAudit('STATUS_CHANGED', `Ticket #${ticketNo} updated to ${newStatus.toUpperCase()}`, 'status');
         writeAuditLog('STATUS_CHANGED', `Ticket #${ticketNo} updated to ${newStatus.toUpperCase()} by ${localStorage.getItem('username')||'UNKNOWN'}`);
         // Push notification for resolution
         if (newStatus.toUpperCase() === 'RESOLVED') {
@@ -435,6 +448,28 @@ async function updateTicketStatus(ticketNo, newStatus) {
     }
 }
 
+async function requestTicketStatusChange(ticketNo, newStatus) {
+    const ticket = cachedTickets.find(t => String(t.TicketNo) === String(ticketNo));
+    const currentStatus = (ticket?.Status || 'PENDING').toUpperCase();
+    if (currentStatus === newStatus.toUpperCase()) return;
+
+    try {
+        const { error } = await db.from('status_change_requests').insert([{
+            ticket_no: ticketNo,
+            previous_status: currentStatus,
+            requested_status: newStatus.toUpperCase(),
+            requested_by: localStorage.getItem('username') || 'UNKNOWN',
+            request_status: 'PENDING'
+        }]);
+        if (error) throw error;
+        showToast('✓ STATUS CHANGE SENT FOR ADMIN APPROVAL');
+        writeAuditLog('STATUS_CHANGE_REQUESTED', `Ticket #${ticketNo} status change requested: ${currentStatus} → ${newStatus.toUpperCase()}`);
+    } catch (err) {
+        console.error('Status request error:', err);
+        showToast('⚠ APPROVAL REQUEST FAILED', true);
+    }
+}
+
 // FIX: handleStatusChange was called in populateTable but never defined
 function handleStatusChange(selectEl, ticketNo) {
     const newStatus = selectEl.value;
@@ -444,7 +479,70 @@ function handleStatusChange(selectEl, ticketNo) {
     else if (newStatus === 'BLOCKED') selectEl.classList.add('select-blocked');
     else selectEl.classList.add('select-pending');
 
+    const isAdmin = (localStorage.getItem('userRole') || '').toUpperCase() === 'ADMIN';
+    if (!isAdmin) {
+        const ticket = cachedTickets.find(t => String(t.TicketNo) === String(ticketNo));
+        const currentStatus = (ticket?.Status || 'PENDING').toUpperCase();
+        selectEl.value = currentStatus;
+        selectEl.className = 'status-select ' + (currentStatus === 'RESOLVED' ? 'select-resolved' : currentStatus === 'BLOCKED' ? 'select-blocked' : 'select-pending');
+    }
     updateTicketStatus(ticketNo, newStatus);
+}
+
+async function loadPendingStatusApprovals() {
+    if ((localStorage.getItem('userRole') || '').toUpperCase() !== 'ADMIN') return;
+    try {
+        const { data, error } = await db
+            .from('status_change_requests')
+            .select('*')
+            .eq('request_status', 'PENDING')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+
+        (data || []).forEach(request => {
+            const notificationId = `status-approval-${request.id}`;
+            if (!notifications.some(n => n.approvalId === notificationId)) {
+                pushNotif(`Approval needed: ${request.requested_by} wants Ticket #${request.ticket_no} changed to ${request.requested_status}`, 'warning', request.ticket_no, notificationId, request);
+            }
+        });
+    } catch (err) {
+        console.error('Approval load error:', err);
+    }
+}
+
+async function reviewStatusChange(requestId, approved) {
+    if ((localStorage.getItem('userRole') || '').toUpperCase() !== 'ADMIN') return;
+    const request = notifications.find(n => n.approvalId === `status-approval-${requestId}`)?.approvalRequest;
+    if (!request) return;
+
+    try {
+        const { data: claimedRequest, error: claimError } = await db
+            .from('status_change_requests')
+            .update({
+                request_status: approved ? 'APPROVED' : 'REJECTED',
+                reviewed_by: localStorage.getItem('username') || 'UNKNOWN',
+                reviewed_at: new Date().toISOString()
+            })
+            .eq('id', requestId)
+            .eq('request_status', 'PENDING')
+            .select('id')
+            .maybeSingle();
+        if (claimError) throw claimError;
+        if (!claimedRequest) throw new Error('This approval request was already reviewed');
+
+        if (approved) {
+            await updateTicketStatus(request.ticket_no, request.requested_status);
+        } else {
+            await writeAuditLog('STATUS_CHANGE_REJECTED', `Ticket #${request.ticket_no} status change to ${request.requested_status} rejected for ${request.requested_by}`);
+            showToast('✓ STATUS CHANGE REJECTED');
+        }
+        notifications = notifications.filter(n => n.approvalId !== `status-approval-${requestId}`);
+        renderNotifPanel();
+        updateNotifBadge();
+    } catch (err) {
+        console.error('Approval review error:', err);
+        showToast('⚠ APPROVAL ACTION FAILED', true);
+    }
 }
 
 // XSS helper
@@ -523,9 +621,9 @@ function logAudit(action, detail, type = 'ticket') {
 // =============================================
 // NOTIFICATIONS — Push + Render
 // =============================================
-function pushNotif(msg, type = 'info', ticketNo = null) {
+function pushNotif(msg, type = 'info', ticketNo = null, approvalId = null, approvalRequest = null) {
     // type: info | warning | critical
-    const n = { id: Date.now() + Math.random(), msg, type, ticketNo, ts: new Date(), read: false };
+    const n = { id: Date.now() + Math.random(), msg, type, ticketNo, approvalId, approvalRequest, ts: new Date(), read: false };
     notifications.unshift(n);
     if (notifications.length > 50) notifications.pop();
     renderNotifPanel();
@@ -547,6 +645,10 @@ function renderNotifPanel() {
             <div>
                 <div class="notif-msg">${escapeHtml(n.msg)}</div>
                 <div class="notif-time">${timeAgo(n.ts)}</div>
+                ${n.approvalRequest ? `<div style="display:flex;gap:6px;margin-top:8px;">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); reviewStatusChange('${escapeHtml(String(n.approvalRequest.id))}', true)">APPROVE</button>
+                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); reviewStatusChange('${escapeHtml(String(n.approvalRequest.id))}', false)">REJECT</button>
+                </div>` : ''}
             </div>
         </div>`).join('');
 }
@@ -695,7 +797,6 @@ function openTicketModal(ticketNo) {
     renderModalNotes(ticketNo);
     renderTicketAttachments(ticketNo);
     if (modal) modal.classList.add('open');
-    logAudit('TICKET_VIEWED', `Ticket #${ticketNo} — ${(t.Name||'---').toUpperCase()} opened for review`, 'ticket');
     writeAuditLog('TICKET_VIEWED', `Ticket #${ticketNo} (${(t.Name||'---').toUpperCase()}) opened by ${localStorage.getItem('username')||'UNKNOWN'}`);
 }
 
@@ -770,7 +871,6 @@ function modalChangeStatus(newStatus) {
     // Update modal badge immediately
     const sb = document.getElementById('modal-status-badge');
     if (sb) { sb.textContent = newStatus; sb.className = 'badge ' + (newStatus === 'RESOLVED' ? 'badge-resolved' : newStatus === 'BLOCKED' ? 'badge-blocked' : 'badge-pending'); }
-    logAudit('STATUS_CHANGED', `Ticket #${currentTicket.TicketNo} → ${newStatus}`, 'status');
     writeAuditLog('STATUS_CHANGED', `Ticket #${currentTicket.TicketNo} status changed to ${newStatus} via modal by ${localStorage.getItem('username')||'UNKNOWN'}`);
     closeTicketModal();
 }
@@ -784,7 +884,8 @@ Branch: ${t.Branch||'---'}
 Type: ${t.Type||'---'}
 Status: ${t.Status||'---'}
 Severity: ${t.SeverityLevel||'---'}
-Concern: ${t.Concerns||'---'}`;
+Concern: ${t.Concerns||'---'}
+Assistance Provided: ${t.Assistance||'---'}`;
     navigator.clipboard?.writeText(text).then(() => showToast('✓ COPIED TO CLIPBOARD')).catch(() => showToast('⚠ COPY FAILED', true));
 }
 
@@ -828,7 +929,6 @@ function addTicketNote() {
     if (inp) inp.value = '';
     renderModalNotes(ticketNo);
     showToast('✓ NOTE ADDED');
-    logAudit('NOTE_ADDED', `Ticket #${ticketNo}: "${note.slice(0,60)}..."`, 'ticket');
     writeAuditLog('NOTE_ADDED', `Note added to Ticket #${ticketNo} by ${localStorage.getItem('username')||'UNKNOWN'}: "${note.slice(0,80)}"`);
 }
 
@@ -1019,25 +1119,8 @@ window.addEventListener('online',  () => retryConnection());
 window.addEventListener('offline', () => setConnectionStatus('error'));
 
 // =============================================
-// SESSION — polling + activity reset
+// SESSION — activity reset
 // =============================================
-setInterval(checkSession, 60_000);
-
-let activityTimer;
-
-['click', 'keydown', 'mousemove'].forEach(ev =>
-
-    document.addEventListener(ev, () => {
-
-        if (localStorage.getItem('isLoggedIn') === 'true') {
-
-            localStorage.setItem('loginTimestamp', Date.now());
-
-        }
-
-    }, { passive: true })
-
-);
 
 // =============================================
 // KEYBOARD SHORTCUTS — unified single handler
@@ -1064,7 +1147,7 @@ document.addEventListener('keydown', function(e) {
         refreshDashboardData();
     }
     if (e.key >= '1' && e.key <= '5') {
-        const pages = ['dashboard','summary','report','kiosk','analytics','audit','admin'];
+        const pages = ['dashboard','summary','reports','report','kiosk','analytics','audit','admin'];
         showPage(pages[parseInt(e.key) - 1]);
     }
     if (e.key === '?') {

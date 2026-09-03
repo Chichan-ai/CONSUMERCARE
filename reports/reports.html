@@ -1,0 +1,73 @@
+<div class="page-header">
+    <div>
+        <div class="page-title">REPORTS</div>
+        <div class="page-subtitle">Generate, filter, and export consumer care tickets</div>
+    </div>
+</div>
+
+<section class="reports-filter-panel">
+    <div class="reports-panel-title">REPORT FILTERS</div>
+
+    <div class="reports-filters">
+        <div class="reports-field">
+            <label class="reports-label" for="report-start-date">FROM</label>
+            <input type="date" id="report-start-date" class="reports-input">
+        </div>
+
+        <div class="reports-field">
+            <label class="reports-label" for="report-end-date">TO</label>
+            <input type="date" id="report-end-date" class="reports-input">
+        </div>
+
+        <div class="reports-field">
+            <label class="reports-label" for="report-ticket-type">TYPE OF TICKET</label>
+            <select id="report-ticket-type" class="reports-input">
+                <option value="">ALL TYPES</option>
+                <option>DEPOSIT CONCERNS</option>
+                <option>LOAN CONCERNS</option>
+                <option>LOG-IN ISSUES</option>
+                <option>MOBILE APP ISSUES</option>
+                <option>SOA</option>
+                <option>OTHER CONCERNS</option>
+            </select>
+        </div>
+
+        <div class="reports-field">
+            <label class="reports-label" for="report-status">STATUS</label>
+            <select id="report-status" class="reports-input">
+                <option value="">ALL STATUSES</option>
+                <option>PENDING</option>
+                <option>RESOLVED</option>
+                <option>BLOCKED</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="reports-actions">
+        <button type="button" class="reports-btn reports-btn-primary" onclick="generateReport()">
+            FILTER REPORT
+        </button>
+        <button type="button" class="reports-btn reports-btn-secondary" onclick="exportFilteredTickets()">
+            EXPORT REPORT
+        </button>
+        <button type="button" class="reports-btn reports-btn-secondary" onclick="resetReportFilters()">
+            RESET FILTERS
+        </button>
+    </div>
+</section>
+
+<section class="card reports-preview-card">
+    <div class="card-header reports-preview-header">
+        <div>
+            <div class="dot dot-green"></div>
+            <span class="label">REPORT PREVIEW</span>
+        </div>
+        <span class="reports-count" id="reports-count">0 TICKETS</span>
+    </div>
+    <div class="table-wrap reports-table-wrap">
+        <table class="data-table reports-data-table">
+            <thead><tr><th>Ticket #</th><th>Date Issued</th><th>Client</th><th>Branch</th><th>Status</th><th>Severity</th></tr></thead>
+            <tbody id="reports-preview-body"></tbody>
+        </table>
+    </div>
+</section>

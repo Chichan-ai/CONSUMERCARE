@@ -85,7 +85,6 @@ async function handleFormSubmit(e) {
         }
 
         showToast(attachmentUploadFailed ? '✓ TICKET SAVED; ATTACHMENT UPLOAD FAILED' : '✓ UPLOAD COMPLETE', attachmentUploadFailed);
-        logAudit('TICKET_CREATED', `New ticket submitted via form`, 'ticket');
         const attachmentNote = uploadedPaths.length > 0 ? ` Attachments: ${uploadedPaths.join(', ')}` : '';
         writeAuditLog('TICKET_CREATED', `New ticket #${formData.get('ticketNo')} created for ${(formData.get('name')||'UNKNOWN').toUpperCase()} — Branch: ${formData.get('branch')||'N/A'}, Status: ${formData.get('status')||'PENDING'}.${attachmentNote}`);
         pushNotif('✓ New ticket uploaded successfully', 'info');

@@ -36,10 +36,10 @@
                     <div class="label">Resolved</div>
                     <div class="stat-num text-accent" id="stat-resolved">0</div>
                 </div>
-                <div class="card stat-card stripe-orange">
+                <div class="card stat-card stripe-orange pending-stat-card" role="button" tabindex="0" onclick="viewPendingTickets()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); viewPendingTickets(); }">
                     <div class="stat-heading-row">
                         <span class="label">Active Pending</span>
-                        <button onclick="showPage('summary')" class="stat-view-link">VIEW →</button>
+                        <span class="stat-view-link"></span>
                     </div>
                     <div class="stat-num text-orange" id="stat-pending">0</div>
                 </div>
@@ -91,6 +91,9 @@
                             <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             <input type="text" id="tableSearch" class="input dashboard-search-input" placeholder="Name or ticket #..." onkeyup="filterDashboardTable()">
                         </div>
+                            <button onclick="showAllTickets()" class="btn btn-ghost btn-sm" aria-label="Show all tickets" title="Show all tickets">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            </button>
                     </div>
                     <div class="table-wrap dashboard-table-wrap">
                         <table class="data-table">

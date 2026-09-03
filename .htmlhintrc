@@ -1,0 +1,7 @@
+{
+  "spec": "html",
+  "tagname-lowercase": true,
+  "attr-lowercase": true,
+  "attr-value-double-quotes": true,
+  "inline-style-disabled": false
+}
