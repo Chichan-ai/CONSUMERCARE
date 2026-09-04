@@ -55,6 +55,7 @@
 #add-user-modal {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.65);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     z-index: 520;
     display: none; align-items: center; justify-content: center;
@@ -65,8 +66,8 @@
 
 .add-user-modal-box {
     background: var(--surface-overlay);
-    backdrop-filter: var(--blur-md);
     -webkit-backdrop-filter: var(--blur-md);
+    backdrop-filter: var(--blur-md);
     border: 1px solid var(--border-accent);
     border-top-color: var(--border-glass);
     border-radius: 16px; width: 100%; max-width: 480px;
