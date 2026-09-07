@@ -251,6 +251,11 @@ body:has(#login-section:not(.hidden))::after {
     text-transform: uppercase;
 }
 
+/* Hide the sidebar/hamburger logo toggle while on the login page */
+body:has(#login-section:not(.hidden)) #hamburger-btn {
+    display: none !important;
+}
+
 /* ── Mobile login tweaks ── */
 @media (max-width: 480px) {
     #login-section { padding: 16px; align-items: flex-start; padding-top: calc(24px + env(safe-area-inset-top, 0px)); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
