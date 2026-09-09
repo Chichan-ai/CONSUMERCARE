@@ -258,6 +258,8 @@ function showPage(page) {
     const adminOnlyPages = ['kiosk', 'admin', 'audit', 'analytics'];
     if (adminOnlyPages.includes(page) && !isAdmin) page = 'dashboard';
 
+    if (window.innerWidth <= 767) closeSidebar();
+
     localStorage.setItem('activePage', page);
     sessionStorage.setItem('activePage', page);
     ['dashboard','summary','reports','report','kiosk','analytics','audit','admin'].forEach(p => {
