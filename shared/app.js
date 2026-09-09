@@ -290,6 +290,8 @@ function toggleSidebarExpand() {
     const sidebar = document.getElementById('sidebar');
     const isExpanded = sidebar.classList.toggle('expanded');
     document.body.classList.toggle('sidebar-expanded', isExpanded);
+    document.getElementById('sidebar-overlay')?.classList.toggle('visible', isExpanded && window.innerWidth <= 767);
+    document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', String(isExpanded));
     localStorage.setItem('sidebarExpanded', isExpanded ? '1' : '0');
 }
 
@@ -298,6 +300,9 @@ function restoreSidebarState() {
     if (localStorage.getItem('sidebarExpanded') === '1') {
         document.getElementById('sidebar')?.classList.add('expanded');
         document.body.classList.add('sidebar-expanded');
+        const isMobile = window.innerWidth <= 767;
+        document.getElementById('sidebar-overlay')?.classList.toggle('visible', isMobile);
+        document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', String(isMobile));
     }
 }
 
@@ -310,7 +315,14 @@ function toggleSidebarFromLogo() {
     else toggleSidebarExpand();
 }
 
-function closeSidebar()   { /* no-op — no mobile overlay in new design */ }
+function closeSidebar() {
+    if (window.innerWidth > 767) return;
+    document.getElementById('sidebar')?.classList.remove('expanded');
+    document.body.classList.remove('sidebar-expanded');
+    document.getElementById('sidebar-overlay')?.classList.remove('visible');
+    document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', 'false');
+    localStorage.setItem('sidebarExpanded', '0');
+}
 
 // =============================================
 // LOAD DATA  — FIX: removed nested loadData(), fixed call order
