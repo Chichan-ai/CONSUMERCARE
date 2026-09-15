@@ -180,8 +180,8 @@ function buildSlaTable(data) {
         const ageMins = (now - issued) / 60000;
         const ageStr = ageMins >= 1440 ? (ageMins/1440).toFixed(1)+'d' : ageMins >= 60 ? (ageMins/60).toFixed(1)+'h' : Math.round(ageMins)+'m';
         const isUrgent = (t.SeverityLevel||'').toUpperCase() === 'CRITICAL' && ageMins > 120;
-        return `<tr style="${isUrgent?'background:rgba(255,68,68,0.05);':''} cursor:pointer;" onclick="openTicketModal('${t.TicketNo}')">
-            <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo}</td>
+        return `<tr style="${isUrgent?'background:rgba(255,68,68,0.05);':''} cursor:pointer;" data-ticket="${escapeHtml(String(t.TicketNo))}">
+            <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${escapeHtml(String(t.TicketNo))}</td>
             <td style="font-weight:600;">${escapeHtml((t.Name||'---').toUpperCase())}</td>
             <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(t.Branch||'---')}</td>
             <td class="${severityClass(t.SeverityLevel)}" style="font-family:var(--font-mono);font-size:11px;">${(t.SeverityLevel||'LOW').toUpperCase()}</td>
@@ -214,7 +214,7 @@ function downloadAnalyticsPDF() {
         @media print{body{padding:20px;}}
     </style></head><body class="dark">
         <h1>CONSUMER CARE — ANALYTICS REPORT</h1>
-        <p style="font-size:11px;color:#666;margin-bottom:20px;">Generated: ${now} · User: ${localStorage.getItem('username')||'SYSTEM'}</p>
+        <p style="font-size:11px;color:#666;margin-bottom:20px;">Generated: ${now} · User: ${escapeHtml(localStorage.getItem('username')||'SYSTEM')}</p>
         <h2>KEY PERFORMANCE INDICATORS</h2>
         <div>
             <div class="kpi"><span class="kpi-num">${total}</span><span class="kpi-lbl">Total Tickets</span></div>
@@ -225,7 +225,7 @@ function downloadAnalyticsPDF() {
         </div>
         <h2>TICKET STATUS BREAKDOWN</h2>
         <table><thead><tr><th>Ticket #</th><th>Client</th><th>Branch</th><th>Type</th><th>Severity</th><th>Status</th></tr></thead>
-        <tbody>${cachedTickets.slice(0,100).map(t=>`<tr><td>#${t.TicketNo}</td><td>${(t.Name||'---').toUpperCase()}</td><td>${t.Branch||'---'}</td><td>${t.Type||'---'}</td><td>${t.SeverityLevel||'---'}</td><td>${t.Status||'---'}</td></tr>`).join('')}</tbody></table>
+        <tbody>${cachedTickets.slice(0,100).map(t=>`<tr><td>#${escapeHtml(String(t.TicketNo))}</td><td>${escapeHtml((t.Name||'---').toUpperCase())}</td><td>${escapeHtml(t.Branch||'---')}</td><td>${escapeHtml(t.Type||'---')}</td><td>${escapeHtml(t.SeverityLevel||'---')}</td><td>${escapeHtml(t.Status||'---')}</td></tr>`).join('')}</tbody></table>
         <p style="font-size:10px;color:#aaa;margin-top:32px;">AGRIBANK CONSUMER CARE SYSTEM · CONFIDENTIAL</p>
         <script>setTimeout(()=>window.print(),600)</scr`+'ipt></body></html>');
     w.document.close();
@@ -251,9 +251,10 @@ function updateExtendedKPIs(data) {
     const critEl = document.getElementById('stat-critical');
     if (critEl) animateValue(critEl, parseInt(critEl.innerText)||0, critOpenCount);
 
-    const appCount = data.filter(t => (t.Channel||'').toUpperCase().includes('APP')).length;
-    const appEl = document.getElementById('stat-app');
-    if (appEl) animateValue(appEl, parseInt(appEl.innerText)||0, appCount);
+    // Total distinct branches with tickets (mirrors the branch overview modal)
+    const branchCounts = (data || []).reduce((acc, t) => { const k = t.Branch || 'Unknown'; acc[k] = (acc[k] || 0) + 1; return acc; }, {});
+    const branchEl = document.getElementById('stat-branches');
+    if (branchEl) animateValue(branchEl, parseInt(branchEl.innerText)||0, Object.keys(branchCounts).length);
 
     const escalatedCount = data.filter(t => (t.Action||'').toUpperCase()==='ESCALATED').length;
     const escEl = document.getElementById('stat-escalated');

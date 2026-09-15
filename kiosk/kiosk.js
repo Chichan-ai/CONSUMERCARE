@@ -406,9 +406,9 @@ function exportMonitoringExcel() {
     
     const headers = ['Location','Terminal No.','Date','Type','Shipping Fee','Quantity','Unit Cost','Total','Remarks'];
     const rows = [headers, ...data.map(r => [
-        r.kiosk_location||'', r.terminal_no||'', r.maintenance_date||'',
-        r.maintenance_type||'', parseFloat(r.shipping_fee||0), r.quantity||0,
-        parseFloat(r.maintenance_cost||0), parseFloat(r.total||0), r.remarks||''
+        sanitizeCell(r.kiosk_location||''), sanitizeCell(r.terminal_no||''), sanitizeCell(r.maintenance_date||''),
+        sanitizeCell(r.maintenance_type||''), parseFloat(r.shipping_fee||0), r.quantity||0,
+        parseFloat(r.maintenance_cost||0), parseFloat(r.total||0), sanitizeCell(r.remarks||'')
     ])];
     
     const wb = XLSX.utils.book_new();

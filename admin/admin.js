@@ -320,7 +320,7 @@ function clearAuditLog() {
 function exportAuditLog() {
     if (auditLog.length === 0) { showToast('⚠ AUDIT LOG EMPTY', true); return; }
     const wsData = [['Timestamp','Action','Detail','User','Type']];
-    auditLog.forEach(e => wsData.push([e.tsDisplay, e.action, e.detail, e.user, e.type]));
+    auditLog.forEach(e => wsData.push([sanitizeCell(e.tsDisplay), sanitizeCell(e.action), sanitizeCell(e.detail), sanitizeCell(e.user), sanitizeCell(e.type)]));
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     ws['!cols'] = [{ wch:22 },{ wch:30 },{ wch:50 },{ wch:18 },{ wch:12 }];
@@ -443,7 +443,7 @@ function exportAdminAuditLog() {
     const wsData = [['Timestamp','Actor','Action','Details']];
     data.forEach(e => wsData.push([
         e.created_at ? new Date(e.created_at).toLocaleString('en-PH',{hour12:false}) : '',
-        e.actor||'', e.action||'', e.details||''
+        sanitizeCell(e.actor||''), sanitizeCell(e.action||''), sanitizeCell(e.details||'')
     ]));
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(wsData);

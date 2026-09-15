@@ -54,8 +54,15 @@ async function handleFormSubmit(e) {
     btn.disabled  = true;
 
     try {
+        // Defense-in-depth: strip characters that could break out of HTML/JS
+        // boundaries. Rendering is safe regardless, but keep stored data clean.
+        const rawTicketNo = String(formData.get('ticketNo') || '')
+            .replace(/[<>\s'"`]/g, '')
+            .slice(0, 50);
+        if (!rawTicketNo) { showToast('⚠ INVALID TICKET NO', true); return; }
+
         const { error } = await db.from('tickets').insert([{
-            ticket_no:      formData.get('ticketNo'),
+            ticket_no:      rawTicketNo,
             ticket_tagging: formData.get('ticketTagging'),
             date_issued:    formData.get('dateIssued')   || null,
             date_picked_up: formData.get('datePickedUp') || null,

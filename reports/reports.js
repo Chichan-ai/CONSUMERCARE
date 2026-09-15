@@ -105,7 +105,7 @@ function exportFilteredTickets() {
     }
 
     const keys = Object.keys(REPORT_EXPORT_COLUMNS);
-    const rows = [Object.values(REPORT_EXPORT_COLUMNS), ...tickets.map(ticket => keys.map(key => ticket[key] ?? ''))];
+    const rows = [Object.values(REPORT_EXPORT_COLUMNS), ...tickets.map(ticket => keys.map(key => sanitizeCell(ticket[key] ?? '')))];
     const sheet = XLSX.utils.aoa_to_sheet(rows);
     sheet['!cols'] = keys.map(key => ({ wch: Math.max(REPORT_EXPORT_COLUMNS[key].length + 4, 18) }));
     const book = XLSX.utils.book_new();

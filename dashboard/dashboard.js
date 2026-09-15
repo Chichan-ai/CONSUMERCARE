@@ -82,16 +82,18 @@ function populateTable(dataToDisplay) {
 
         // FIX: handleStatusChange is now defined above
         const statusDropdown = `
-            <select class="status-select ${colorClass}" onchange="handleStatusChange(this, '${t.TicketNo}')" onclick="event.stopPropagation()">
+            <select class="status-select ${colorClass}" data-num="${escapeHtml(String(t.TicketNo))}">
                 ${['PENDING','RESOLVED','BLOCKED'].map(opt =>
                     `<option value="${opt}" ${tStatus === opt ? 'selected' : ''}>${opt}</option>`
                 ).join('')}
             </select>`;
 
+        const safeNum = escapeHtml(String(t.TicketNo || '---'));
+
         // Enhanced: long client / branch names wrap + hover tooltips so nothing is hidden
         return `
-            <tr class="ticket-row" onclick="openTicketModal('${t.TicketNo}')">
-                <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;" title="#${t.TicketNo || '---'}">#${t.TicketNo || '---'}</td>
+            <tr class="ticket-row" data-ticket="${escapeHtml(String(t.TicketNo))}">
+                <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;" title="#${safeNum}">#${safeNum}</td>
                 <td class="cell-wrap" style="font-weight:600;text-transform:uppercase;" title="${safeName}">${safeName}</td>
                 <td class="cell-wrap" style="color:var(--text-dim);font-size:12px;" title="${safeBranch}">${safeBranch}</td>
                 <td class="${sevClass}" style="font-family:var(--font-mono);font-size:11px;" title="${tSeverity}">${tSeverity}</td>
@@ -245,7 +247,7 @@ function downloadExcel() {
             wsData.push(dbKeys.map(k => {
                 const v = row[k];
                 if (v === null || v === undefined) return '';
-                return v;
+                return sanitizeCell(v);
             }));
         });
 
@@ -275,7 +277,7 @@ function downloadExcel() {
             ['Total Tickets', totalTickets],
             ['Resolved',   resolved],
             ['Pending',    pending],
-            ['Export By',  localStorage.getItem('username') || 'UNKNOWN'],
+            ['Export By',  sanitizeCell(localStorage.getItem('username') || 'UNKNOWN')],
         ];
 
         const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);

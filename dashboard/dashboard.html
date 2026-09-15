@@ -36,6 +36,13 @@
                     <div class="label">Resolved</div>
                     <div class="stat-num text-accent" id="stat-resolved">0</div>
                 </div>
+                <div class="card stat-card stripe-purple clickable-stat" role="button" tabindex="0" title="Click to view all branches" onclick="openChartOverview('branch')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChartOverview('branch');}">
+                    <div class="stat-heading-row">
+                        <span class="label">Total Branches</span>
+                        <span class="stat-view-link">VIEW</span>
+                    </div>
+                    <div class="stat-num text-purple" id="stat-branches">0</div>
+                </div>
                 <div class="card stat-card stripe-orange pending-stat-card" role="button" tabindex="0" onclick="viewPendingTickets()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); viewPendingTickets(); }">
                     <div class="stat-heading-row">
                         <span class="label">Active Pending</span>
@@ -43,13 +50,14 @@
                     </div>
                     <div class="stat-num text-orange" id="stat-pending">0</div>
                 </div>
+                
+            </div>
+            <!-- Extended KPI row (2 extras) -->
+            <div class="stats-grid extended-stats-grid">
                 <div class="card stat-card stripe-blue">
                     <div class="label">Avg Resolution Time</div>
                     <div class="stat-num text-blue" id="stat-tat">0h</div>
                 </div>
-            </div>
-            <!-- Extended KPI row (2 extras) -->
-            <div class="stats-grid extended-stats-grid">
                 <div class="card stat-card stripe-accent">
                     <div class="label">SLA Compliance</div>
                     <div class="stat-num text-accent" id="stat-sla">--%</div>
@@ -60,14 +68,11 @@
                     <div class="stat-num text-red" id="stat-critical">0</div>
                     <div class="kpi-trend" id="stat-critical-trend"></div>
                 </div>
-                <div class="card stat-card stripe-purple">
-                    <div class="label">Channel: App</div>
-                    <div class="stat-num text-purple" id="stat-app">0</div>
-                </div>
                 <div class="card stat-card stripe-yellow">
                     <div class="label">Escalated</div>
                     <div class="stat-num text-yellow" id="stat-escalated">0</div>
                 </div>
+                
             </div>
 
             <div class="charts-grid">

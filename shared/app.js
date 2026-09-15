@@ -566,6 +566,13 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Excel/CSV formula-injection guard: prefix '=' '+' '-' '@' (and tab/CR)
+// cells with an apostrophe so they render as text, not formulas.
+function sanitizeCell(v) {
+    const s = (v == null ? '' : String(v));
+    return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+}
+
 // =============================================
 // CHARTS
 // =============================================
@@ -712,6 +719,18 @@ document.addEventListener('click', e => {
     if (sp && !sp.contains(e.target) && e.target !== gs) sp.classList.remove('open');
 });
 
+// Delegated handlers: ticket rows and status dropdowns are rendered from DB
+// data, so we bind them here instead of generating inline onclick/onchange.
+document.addEventListener('click', e => {
+    if (e.target.closest('.status-select')) return;
+    const row = e.target.closest('[data-ticket]');
+    if (row) openTicketModal(row.dataset.ticket);
+});
+document.addEventListener('change', e => {
+    const sel = e.target.closest('select.status-select');
+    if (sel) handleStatusChange(sel, sel.dataset.num);
+});
+
 // =============================================
 // GLOBAL SEARCH
 // =============================================
@@ -731,8 +750,8 @@ function handleGlobalSearch(val) {
         panel.innerHTML = '<div style="padding:16px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-align:center;">NO RESULTS</div>';
     } else {
         panel.innerHTML = results.map(t => `
-            <div class="search-result-item" onclick="openTicketModal(${t.TicketNo})">
-                <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);min-width:44px;">#${t.TicketNo}</div>
+            <div class="search-result-item" data-ticket="${escapeHtml(String(t.TicketNo))}">
+                <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);min-width:44px;">#${escapeHtml(String(t.TicketNo))}</div>
                 <div style="flex:1;">
                     <div style="font-size:12px;font-weight:600;">${escapeHtml((t.Name||'---').toUpperCase())}</div>
                     <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);">${escapeHtml(t.Branch||'---')} · ${escapeHtml(t.Type||'---')}</div>
