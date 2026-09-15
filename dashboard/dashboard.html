@@ -71,10 +71,11 @@
             </div>
 
             <div class="charts-grid">
-                <div class="card branch-chart-card">
+                <div class="card branch-chart-card clickable-chart" role="button" tabindex="0" title="Click for full-screen overview" onclick="openChartOverview('branch')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChartOverview('branch');}">
                     <div class="card-header">
                         <div class="dot dot-green"></div>
                         <span class="label">Branch Volume</span>
+                        <span class="chart-zoom-hint">⛶ VIEW</span>
                     </div>
                     <div class="chart-panel">
                         <canvas id="branchChart"></canvas>
@@ -111,23 +112,55 @@
                     </div>
                 </div>
 
-                <div class="card engagement-chart-card">
+                <div class="card engagement-chart-card clickable-chart" role="button" tabindex="0" title="Click for full-screen overview" onclick="openChartOverview('engagement')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChartOverview('engagement');}">
                     <div class="card-header">
                         <div class="dot dot-green"></div>
                         <span class="label">Type of Engagement</span>
+                        <span class="chart-zoom-hint">⛶ VIEW</span>
                     </div>
                     <div class="chart-panel">
                         <canvas id="engagementChart"></canvas>
                     </div>
                 </div>
 
-                <div class="card ticket-chart-card">
+                <div class="card ticket-chart-card clickable-chart" role="button" tabindex="0" title="Click for full-screen overview" onclick="openChartOverview('ticket-type')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openChartOverview('ticket-type');}">
                     <div class="card-header">
                         <div class="dot dot-red"></div>
                         <span class="label">Ticket Type Breakdown</span>
+                        <span class="chart-zoom-hint">⛶ VIEW</span>
                     </div>
                     <div class="chart-panel">
                         <canvas id="ticketChart"></canvas>
                     </div>
                 </div>
             </div>
+
+                <!-- Chart Overview Modal — full-screen data overview -->
+                <div id="chart-overview-modal" onclick="if(event.target===this)closeChartOverview()">
+                    <div class="chart-overview-box">
+                        <div class="chart-overview-header">
+                            <div>
+                                <div class="chart-overview-title" id="chart-overview-title">TYPE OF ENGAGEMENT</div>
+                                <div class="chart-overview-total" id="chart-overview-total">TOTAL: 0 TICKETS</div>
+                            </div>
+                            <button type="button" class="chart-overview-close" onclick="closeChartOverview()" aria-label="Close overview" title="Close">×</button>
+                        </div>
+                        <div class="chart-overview-grid">
+                            <div class="chart-overview-canvas-wrap">
+                                <canvas id="chart-overview-canvas"></canvas>
+                            </div>
+                            <div class="chart-overview-table-wrap">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th style="text-align:right;">Count</th>
+                                            <th style="text-align:right;">Share</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="chart-overview-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>

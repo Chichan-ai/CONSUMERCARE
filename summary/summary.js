@@ -39,11 +39,7 @@ function updateSummary(tickets) {
             emptyMsg?.classList.add('hidden');
             listBody.innerHTML = todayTickets.slice().reverse().map(t => {
                 const status = (t.Status || '').toString().trim().toUpperCase();
-                const badge  = status === 'RESOLVED'
-                    ? `<span class="badge badge-resolved">RESOLVED</span>`
-                    : status === 'BLOCKED'
-                    ? `<span class="badge badge-blocked">BLOCKED</span>`
-                    : `<span class="badge badge-pending">PENDING</span>`;
+                const badge  = `<span class="badge ${statusBadgeClass(status)}">${status}</span>`;
                 return `
                     <tr>
                         <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo}</td>

@@ -1,6 +1,21 @@
 // =============================================
 // SUBMIT TICKET
 // =============================================
+
+// Populate the Type of Engagement dropdown from the shared constant so the
+// form can never drift out of sync with charts/exports.
+document.addEventListener('modulesReady', () => {
+    const engagementEl = document.getElementById('engagementInput');
+    if (engagementEl) {
+        ENGAGEMENT_TYPES.forEach(type => {
+            const opt = document.createElement('option');
+            opt.textContent = type;
+            opt.value = type;
+            engagementEl.appendChild(opt);
+        });
+    }
+});
+
 async function handleFormSubmit(e) {
     e.preventDefault();
     const form = e.target;
@@ -31,6 +46,10 @@ async function handleFormSubmit(e) {
         return;
     }
 
+    // Dropdown values are uppercase in the form but stored Title Case to match
+    // the legacy records already in the database.
+    const legacyValue = value => titleCase(formData.get(value) || '');
+
     btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#040c0a;border-color:rgba(4,12,10,0.2);"></div> TRANSMITTING...';
     btn.disabled  = true;
 
@@ -42,15 +61,15 @@ async function handleFormSubmit(e) {
             date_picked_up: formData.get('datePickedUp') || null,
             date_replied:   formData.get('dateReplied')  || null,
             name:           (formData.get('name') || '').toUpperCase(),
-            branch:         formData.get('branch'),
-            type:           formData.get('type'),
-            engagement:     formData.get('engagement'),
+            branch:         legacyValue('branch'),
+            type:           legacyValue('type'),
+            engagement:     legacyValue('engagement'),
             concerns:       formData.get('concerns'),
             assistance:     formData.get('assistance'),
-            action:         formData.get('action'),
+            action:         legacyValue('action'),
             status:         formData.get('status'),
-            channel:        formData.get('channel'),
-            severity_level: formData.get('severity'),
+            channel:        legacyValue('channel'),
+            severity_level: legacyValue('severity'),
         }]);
 
         if (error) throw new Error(error.message);

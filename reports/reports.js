@@ -1,20 +1,5 @@
-const REPORT_EXPORT_COLUMNS = {
-    ticket_no: 'Ticket No',
-    ticket_tagging: 'Ticket Tagging',
-    date_issued: 'Date Issued',
-    date_picked_up: 'Date Picked Up',
-    date_replied: 'Date Replied',
-    name: 'Customer Name',
-    branch: 'Branch',
-    type: 'Ticket Type',
-    engagement: 'Engagement Type',
-    concerns: 'Client Concern',
-    assistance: 'Assistance Provided',
-    action: 'Action Taken',
-    status: 'Status',
-    channel: 'Channel',
-    severity_level: 'Severity Level'
-};
+// Column mapping (DB key → human header) lives in shared/constants.js
+// (REPORT_EXPORT_COLUMNS) so dashboard + reports exports stay in sync.
 
 let lastGeneratedTickets = [];
 
@@ -89,7 +74,7 @@ function renderReportTable(tickets) {
 
     body.innerHTML = tickets.slice(0, 100).map(ticket => {
         const status = (ticket.status || 'PENDING').toUpperCase();
-        const badgeClass = status === 'RESOLVED' ? 'badge-resolved' : status === 'BLOCKED' ? 'badge-blocked' : 'badge-pending';
+        const badgeClass = statusBadgeClass(status);
         return `<tr>
             <td style="font-family:var(--font-mono);">#${escapeHtml(String(ticket.ticket_no ?? '---'))}</td>
             <td>${ticket.date_issued ? new Date(ticket.date_issued).toLocaleString('en-PH', { hour12: false }) : '---'}</td>

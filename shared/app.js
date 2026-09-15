@@ -730,7 +730,6 @@ function handleGlobalSearch(val) {
     if (results.length === 0) {
         panel.innerHTML = '<div style="padding:16px;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-align:center;">NO RESULTS</div>';
     } else {
-        const sevColor = { CRITICAL:'var(--red)', HIGH:'var(--orange)', MODERATE:'var(--yellow)', LOW:'var(--blue)' };
         panel.innerHTML = results.map(t => `
             <div class="search-result-item" onclick="openTicketModal(${t.TicketNo})">
                 <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);min-width:44px;">#${t.TicketNo}</div>
@@ -738,7 +737,7 @@ function handleGlobalSearch(val) {
                     <div style="font-size:12px;font-weight:600;">${escapeHtml((t.Name||'---').toUpperCase())}</div>
                     <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);">${escapeHtml(t.Branch||'---')} · ${escapeHtml(t.Type||'---')}</div>
                 </div>
-                <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:${sevColor[(t.SeverityLevel||'').toUpperCase()]||'var(--text-dim)'};">${(t.SeverityLevel||'').toUpperCase()}</div>
+                <div style="font-family:var(--font-mono);font-size:9px;font-weight:700;color:${severityColor(t.SeverityLevel)};">${(t.SeverityLevel||'').toUpperCase()}</div>
             </div>`).join('');
     }
     panel.classList.add('open');
@@ -775,9 +774,8 @@ function openTicketModal(ticketNo) {
     // Severity badge
     const sevEl = document.getElementById('modal-severity');
     if (sevEl) {
-        const sevColor = { CRITICAL:'var(--red)', HIGH:'var(--orange)', MODERATE:'var(--yellow)', LOW:'var(--blue)' };
         sevEl.textContent = (t.SeverityLevel || 'LOW').toUpperCase();
-        sevEl.style.color = sevColor[(t.SeverityLevel||'low').toUpperCase()] || 'var(--blue)';
+        sevEl.style.color = severityColor(t.SeverityLevel);
         sevEl.style.fontWeight = '700';
         sevEl.style.fontFamily = 'var(--font-mono)';
     }
@@ -787,7 +785,7 @@ function openTicketModal(ticketNo) {
     if (sb) {
         const s = (t.Status || 'PENDING').toUpperCase();
         sb.textContent = s;
-        sb.className = 'badge ' + (s === 'RESOLVED' ? 'badge-resolved' : s === 'BLOCKED' ? 'badge-blocked' : 'badge-pending');
+        sb.className = 'badge ' + statusBadgeClass(s);
     }
 
     // TAT calculation
@@ -798,8 +796,7 @@ function openTicketModal(ticketNo) {
         const hrs  = mins / 60;
         if (tatEl) tatEl.textContent = hrs >= 1 ? hrs.toFixed(1) + 'h' : Math.round(mins) + 'm';
         // SLA target: CRITICAL=2h, HIGH=4h, MODERATE=8h, LOW=24h
-        const slaTarget = { CRITICAL:120, HIGH:240, MODERATE:480, LOW:1440 };
-        const target = slaTarget[(t.SeverityLevel||'LOW').toUpperCase()] || 480;
+        const target = slaTargetFor(t.SeverityLevel);
         const pct = Math.min((mins / target) * 100, 100);
         if (slaBar) { slaBar.style.width = pct + '%'; slaBar.style.background = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--orange)' : 'var(--accent)'; }
     } else {
@@ -884,7 +881,7 @@ function modalChangeStatus(newStatus) {
     handleStatusChange({ value: newStatus, className: 'status-select', classList: { add:()=>{}, remove:()=>{} } }, currentTicket.TicketNo);
     // Update modal badge immediately
     const sb = document.getElementById('modal-status-badge');
-    if (sb) { sb.textContent = newStatus; sb.className = 'badge ' + (newStatus === 'RESOLVED' ? 'badge-resolved' : newStatus === 'BLOCKED' ? 'badge-blocked' : 'badge-pending'); }
+    if (sb) { sb.textContent = newStatus; sb.className = 'badge ' + statusBadgeClass(newStatus); }
     writeAuditLog('STATUS_CHANGED', `Ticket #${currentTicket.TicketNo} status changed to ${newStatus} via modal by ${localStorage.getItem('username')||'UNKNOWN'}`);
     closeTicketModal();
 }
@@ -1145,6 +1142,7 @@ document.addEventListener('keydown', function(e) {
         closeMonitoringModal();
         closeDeleteConfirm();
         closeTicketModal();
+        closeChartOverview();
         const um = document.getElementById('add-user-modal');
         if (um) um.classList.remove('open');
         const notif = document.getElementById('notif-panel');

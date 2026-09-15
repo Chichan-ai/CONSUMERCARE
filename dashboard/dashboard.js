@@ -33,7 +33,7 @@ function renderDashboard(data) {
 
     const catCounts    = data.reduce((acc, t) => { const k = t.Type       || 'Other';    acc[k] = (acc[k] || 0) + 1; return acc; }, {});
     const branchCounts = data.reduce((acc, t) => { const k = t.Branch     || 'Unknown';  acc[k] = (acc[k] || 0) + 1; return acc; }, {});
-    const engCounts    = data.reduce((acc, t) => { const k = t.Engagement || 'Not Set';  acc[k] = (acc[k] || 0) + 1; return acc; }, {});
+    const engCounts    = data.reduce((acc, t) => { const k = t.Engagement || ENGAGEMENT_UNSET;  acc[k] = (acc[k] || 0) + 1; return acc; }, {});
 
     updateChart(catCounts);
     updateBranchChart(branchCounts);
@@ -75,10 +75,7 @@ function populateTable(dataToDisplay) {
         const tStatus    = (t.Status        || 'PENDING').toString().toUpperCase();
         const tSeverity  = (t.SeverityLevel || 'LOW').toString().toUpperCase();
 
-        let sevClass = 'sev-low';
-        if (tSeverity === 'CRITICAL') sevClass = 'sev-critical';
-        else if (tSeverity === 'HIGH')     sevClass = 'sev-high';
-        else if (tSeverity === 'MODERATE') sevClass = 'sev-moderate';
+        const sevClass = severityClass(tSeverity);
 
         const colorClass = tStatus === 'RESOLVED' ? 'select-resolved' :
                            tStatus === 'BLOCKED'  ? 'select-blocked'  : 'select-pending';
@@ -158,14 +155,19 @@ function updateEngagementChart(counts) {
     const ctx = document.getElementById('engagementChart');
     if (!ctx) return;
     const { tickColor } = getChartDefaults();
-    if (engagementChart && patchChart(engagementChart, Object.keys(counts), Object.values(counts))) return;
+    const labels = Object.keys(counts);
+    const values = Object.values(counts);
+    const total = values.reduce((sum, value) => sum + value, 0);
+    const formatPercentage = value => total ? `${((value / total) * 100).toFixed(1)}%` : '0.0%';
+
+    if (engagementChart && patchChart(engagementChart, labels, values)) return;
     if (engagementChart) engagementChart.destroy();
     engagementChart = new Chart(ctx.getContext('2d'), {
         type: 'doughnut',
         data: {
-            labels: Object.keys(counts),
+            labels,
             datasets: [{
-                data: Object.values(counts),
+                data: values,
                 backgroundColor: ['#00ff9d','#00e5c8','#ff6b35','#ffc53d','#b47aff','#5a6478'],
                 borderWidth: 0
             }]
@@ -175,7 +177,22 @@ function updateEngagementChart(counts) {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { color: tickColor, font: { size: 10, family: "'JetBrains Mono'" }, padding: 16 }
+                    labels: {
+                        color: tickColor,
+                        font: { size: 10, family: "'JetBrains Mono'" },
+                        padding: 16,
+                        generateLabels: chart => chart.data.labels.map((label, index) => ({
+                            text: `${label} (${formatPercentage(chart.data.datasets[0].data[index])})`,
+                            fillStyle: chart.data.datasets[0].backgroundColor[index],
+                            hidden: false,
+                            index
+                        }))
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context => `${context.label}: ${context.raw} (${formatPercentage(context.raw)})`
+                    }
                 }
             },
             cutout: '68%'
@@ -215,24 +232,8 @@ function downloadExcel() {
     showToast('⏳ PREPARING EXPORT...');
 
     try {
-        // Build worksheet data with human-readable headers
-        const headers = {
-            ticket_no:      'Ticket No',
-            ticket_tagging: 'Ticket Tagging',
-            date_issued:    'Date Issued',
-            date_picked_up: 'Date Picked Up',
-            date_replied:   'Date Replied',
-            name:           'Customer Name',
-            branch:         'Branch',
-            type:           'Ticket Type',
-            engagement:     'Engagement Type',
-            concerns:       'Client Concern',
-            assistance:     'Assistance Provided',
-            action:         'Action Taken',
-            status:         'Status',
-            channel:        'Channel',
-            severity_level: 'Severity Level',
-        };
+        // Build worksheet data with human-readable headers (shared constant)
+        const headers = REPORT_EXPORT_COLUMNS;
 
         const dbKeys = Object.keys(headers);
 
@@ -321,32 +322,150 @@ function applyFilter(filter, btn) {
     writeAuditLog('FILTER_APPLIED', `Dashboard filter applied: ${filter.toUpperCase()} — ${filtered.length} records shown by ${localStorage.getItem('username')||'UNKNOWN'}`);
 }
 
-// Make ticket rows clickable in the Live Database table
-function populateTableClickable(dataToDisplay) {
-    const reportBody = document.getElementById('daily-report-body');
-    if (!reportBody) return;
-    if (!dataToDisplay || dataToDisplay.length === 0) {
-        reportBody.innerHTML = `<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;">NO DATA FOUND</td></tr>`;
-        return;
+// =============================================
+// CHART OVERVIEW MODAL — full-screen data overview
+// =============================================
+let chartOverviewChart = null;
+
+const CHART_OVERVIEW_COLORS = ['#00ff9d', '#ff6b35', '#00e5c8', '#ffc53d', '#b47aff', '#3d9eff', '#ff4444', '#27c93f', '#ffbd2e', '#5a6478'];
+
+function openChartOverview(kind) {
+    let title = '';
+    let chartType = 'bar';
+    let labels = [];
+    let values = [];
+
+    if (kind === 'engagement' && engagementChart) {
+        title     = 'TYPE OF ENGAGEMENT';
+        chartType = 'doughnut';
+        labels    = engagementChart.data.labels || [];
+        values    = (engagementChart.data.datasets[0]?.data || []).slice();
+    } else if (kind === 'ticket-type' && myChart) {
+        title     = 'TICKET TYPE BREAKDOWN';
+        chartType = 'bar';
+        labels    = myChart.data.labels || [];
+        values    = (myChart.data.datasets[0]?.data || []).slice();
+    } else if (kind === 'branch') {
+        // Full breakdown of every branch (the dashboard card only shows top 10)
+        title     = 'BRANCH VOLUME';
+        chartType = 'horizontal';
+        const counts = (cachedTickets || []).reduce((acc, t) => {
+            const k = t.Branch || 'Unknown';
+            acc[k]  = (acc[k] || 0) + 1;
+            return acc;
+        }, {});
+        labels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        values = labels.map(k => counts[k]);
     }
-    reportBody.innerHTML = dataToDisplay.map(t => {
-      // ✅ All user inputs now properly escaped
-        const safeName = escapeHtml((t.Name || '---').toString());
-        const safeBranch = escapeHtml((t.Branch || '---').toString());
-        const tStatus    = (t.Status        || 'PENDING').toString().toUpperCase();
-        const tSeverity  = (t.SeverityLevel || 'LOW').toString().toUpperCase();
-        let sevClass = 'sev-low';
-        if (tSeverity === 'CRITICAL') sevClass = 'sev-critical';
-        else if (tSeverity === 'HIGH') sevClass = 'sev-high';
-        else if (tSeverity === 'MODERATE') sevClass = 'sev-moderate';
-        const colorClass = tStatus === 'RESOLVED' ? 'select-resolved' : tStatus === 'BLOCKED' ? 'select-blocked' : 'select-pending';
-        const statusDropdown = `<select class="status-select ${colorClass}" onchange="handleStatusChange(this, '${t.TicketNo}')" onclick="event.stopPropagation()">${['PENDING','RESOLVED','BLOCKED'].map(opt=>`<option value="${opt}" ${tStatus===opt?'selected':''}>${opt}</option>`).join('')}</select>`;
-        return `<tr style="cursor:pointer;" onclick="openTicketModal('${t.TicketNo}')">
-            <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo||'---'}</td>
-            <td style="font-weight:600;text-transform:uppercase;" title="${safeName}">${safeName}</td>
-            <td style="color:var(--text-dim);font-size:12px;" title="${safeBranch}">${safeBranch}</td>
-            <td class="${sevClass}" style="font-family:var(--font-mono);font-size:11px;">${tSeverity}</td>
-            <td style="text-align:right;">${statusDropdown}</td>
+
+    if (labels.length === 0) { showToast('⚠ NO DATA TO DISPLAY', true); return; }
+
+    const colors = labels.map((_, i) => CHART_OVERVIEW_COLORS[i % CHART_OVERVIEW_COLORS.length]);
+    const total  = values.reduce((sum, v) => sum + (Number(v) || 0), 0);
+
+    const titleEl = document.getElementById('chart-overview-title');
+    if (titleEl) titleEl.textContent = title;
+    const totalEl = document.getElementById('chart-overview-total');
+    if (totalEl) totalEl.textContent = `TOTAL: ${total} TICKET${total === 1 ? '' : 'S'}`;
+
+    buildChartOverviewTable(labels, values, colors, total);
+    buildChartOverviewChart(chartType, labels, values, colors);
+
+    document.getElementById('chart-overview-modal')?.classList.add('open');
+    document.body.classList.add('chart-overview-open');
+    writeAuditLog('CHART_OVERVIEW', `${title} full-screen overview opened by ${localStorage.getItem('username')||'UNKNOWN'}`);
+}
+
+function chartOverviewPct(value, values) {
+    const total = values.reduce((s, v) => s + (Number(v) || 0), 0);
+    return total ? `${((Number(value) / total) * 100).toFixed(1)}%` : '0.0%';
+}
+
+function buildChartOverviewTable(labels, values, colors, total) {
+    const body = document.getElementById('chart-overview-body');
+    if (!body) return;
+    body.innerHTML = labels.map((label, i) => {
+        const count = Number(values[i]) || 0;
+        const share = total ? ((count / total) * 100).toFixed(1) : '0.0';
+        return `<tr>
+            <td style="font-weight:600;">
+                <span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${colors[i]};margin-right:8px;vertical-align:middle;"></span>
+                <span style="vertical-align:middle;">${escapeHtml(String(label))}</span>
+            </td>
+            <td style="text-align:right;font-family:var(--font-mono);">${count}</td>
+            <td style="text-align:right;font-family:var(--font-mono);color:var(--text-dim);">${share}%</td>
         </tr>`;
     }).join('');
+}
+
+function buildChartOverviewChart(type, labels, values, colors) {
+    const ctx = document.getElementById('chart-overview-canvas');
+    if (!ctx) return;
+    if (chartOverviewChart) chartOverviewChart.destroy();
+    chartOverviewChart = null;
+
+    const { gridColor, tickColor } = getChartDefaults();
+    const isDoughnut     = type === 'doughnut';
+    const isHorizontal   = type === 'horizontal';
+
+    // Horizontal bars grow with the number of branches; reset for other types.
+    const wrap = ctx.closest('.chart-overview-canvas-wrap');
+    if (wrap) {
+        if (isHorizontal) {
+            wrap.style.height = 'auto';
+            wrap.style.minHeight = Math.max(360, labels.length * 28 + 70) + 'px';
+        } else {
+            wrap.style.height = '';
+            wrap.style.minHeight = '360px';
+        }
+    }
+
+    const dataset = isDoughnut
+        ? { data: values, backgroundColor: colors, borderWidth: 0 }
+        : { label: 'VOLUME', data: values, backgroundColor: colors, borderRadius: 6 };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: isHorizontal ? 'y' : undefined,
+        cutout: isDoughnut ? '62%' : undefined,
+        scales: isDoughnut ? undefined : (isHorizontal ? {
+            x: { grid: { color: gridColor }, ticks: { color: tickColor, font: { family: "'JetBrains Mono'" } } },
+            y: { grid: { display: false }, ticks: { color: tickColor, font: { size: 10, family: "'JetBrains Mono'" } } }
+        } : {
+            y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { family: "'JetBrains Mono'" } } },
+            x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11, family: "'JetBrains Mono'" } } }
+        }),
+        plugins: {
+            legend: isDoughnut ? {
+                position: 'bottom',
+                labels: {
+                    color: tickColor,
+                    font: { size: 11, family: "'JetBrains Mono'" },
+                    padding: 14,
+                    generateLabels: chart => chart.data.labels.map((label, index) => ({
+                        text: `${label} (${values[index]} · ${chartOverviewPct(values[index], values)})`,
+                        fillStyle: colors[index],
+                        hidden: false,
+                        index
+                    }))
+                }
+            } : { display: false },
+            tooltip: isDoughnut
+                ? { callbacks: { label: context => `${context.label}: ${context.raw} (${chartOverviewPct(context.raw, values)})` } }
+                : { callbacks: { label: context => `  ${context.raw}` } }
+        }
+    };
+
+    chartOverviewChart = new Chart(ctx.getContext('2d'), {
+        type: isDoughnut ? 'doughnut' : 'bar',
+        data: { labels, datasets: [dataset] },
+        options
+    });
+}
+
+function closeChartOverview() {
+    document.getElementById('chart-overview-modal')?.classList.remove('open');
+    document.body.classList.remove('chart-overview-open');
+    if (chartOverviewChart) { chartOverviewChart.destroy(); chartOverviewChart = null; }
 }

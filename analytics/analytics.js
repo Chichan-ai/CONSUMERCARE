@@ -175,7 +175,6 @@ function buildSlaTable(data) {
         tbody.innerHTML = '<tr><td colspan="7" style="padding:20px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">ALL TICKETS RESOLVED ✓</td></tr>';
         return;
     }
-    const sevColor = { CRITICAL:'sev-critical', HIGH:'sev-high', MODERATE:'sev-moderate', LOW:'sev-low' };
     tbody.innerHTML = pending.map(t => {
         const issued = new Date(t.DateIssued);
         const ageMins = (now - issued) / 60000;
@@ -185,7 +184,7 @@ function buildSlaTable(data) {
             <td style="font-family:var(--font-mono);color:var(--text-muted);font-size:11px;">#${t.TicketNo}</td>
             <td style="font-weight:600;">${escapeHtml((t.Name||'---').toUpperCase())}</td>
             <td style="color:var(--text-dim);font-size:12px;">${escapeHtml(t.Branch||'---')}</td>
-            <td class="${sevColor[(t.SeverityLevel||'LOW').toUpperCase()]}" style="font-family:var(--font-mono);font-size:11px;">${(t.SeverityLevel||'LOW').toUpperCase()}</td>
+            <td class="${severityClass(t.SeverityLevel)}" style="font-family:var(--font-mono);font-size:11px;">${(t.SeverityLevel||'LOW').toUpperCase()}</td>
             <td style="color:var(--text-dim);font-size:11px;font-family:var(--font-mono);">${issued.toLocaleDateString('en-PH')}</td>
             <td style="font-family:var(--font-mono);font-size:11px;color:${isUrgent?'var(--red)':'var(--orange)'};">${ageStr}</td>
             <td style="text-align:right;"><span class="badge badge-pending">OPEN</span></td>
@@ -238,11 +237,10 @@ function downloadAnalyticsPDF() {
 // =============================================
 function updateExtendedKPIs(data) {
     // SLA compliance: resolved within target
-    const slaTarget = { CRITICAL:120, HIGH:240, MODERATE:480, LOW:1440 };
     const resolvedWithTime = data.filter(t => (t.Status||'').toLowerCase()==='resolved' && t.DateIssued && t.DateReplied);
     const slaCompliant = resolvedWithTime.filter(t => {
         const mins    = (new Date(t.DateReplied)-new Date(t.DateIssued))/60000;
-        const target  = slaTarget[(t.SeverityLevel||'LOW').toUpperCase()] || 480;
+        const target  = slaTargetFor(t.SeverityLevel);
         return mins <= target;
     });
     const slaPct = resolvedWithTime.length > 0 ? ((slaCompliant.length/resolvedWithTime.length)*100).toFixed(1) : '--';
