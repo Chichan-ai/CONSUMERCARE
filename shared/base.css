@@ -1169,42 +1169,6 @@ select.input {
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
 }
-.notif-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-    padding: 10px;
-    border-bottom: 1px solid var(--border);
-}
-.notif-summary-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 4px;
-    min-width: 0;
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--surface);
-    color: var(--text-muted);
-    font-family: var(--font-body);
-    font-size: 10px;
-    text-align: left;
-}
-button.notif-summary-item { cursor: pointer; }
-button.notif-summary-item:hover { border-color: var(--border-accent); background: var(--accent-dim); }
-.notif-summary-item strong {
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 15px;
-}
-.notif-summary-action {
-    grid-column: 1 / -1;
-    color: var(--accent);
-    font-size: 9px;
-    text-transform: uppercase;
-}
-.notif-summary-readout { cursor: default; }
 .notif-list { overflow-y: auto; flex: 1; }
 .notif-item {
     padding: 12px 16px;

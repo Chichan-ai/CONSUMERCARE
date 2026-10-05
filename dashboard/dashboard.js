@@ -41,7 +41,6 @@ function renderDashboard(data) {
 
     // v2.0 extras
     updateExtendedKPIs(data);
-    renderNotificationSummary();
     // Update analytics page if visible
     const analyticsPage = document.getElementById('page-analytics');
     if (analyticsPage && !analyticsPage.classList.contains('hidden')) renderAnalytics();

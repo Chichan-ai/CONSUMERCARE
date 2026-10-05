@@ -408,8 +408,6 @@ async function loadData() {
         cachedTickets.sort((a, b) => Number(b.TicketNo) - Number(a.TicketNo));
         // Keep raw export data in same order
         currentDashboardData.sort((a, b) => Number(b.ticket_no) - Number(a.ticket_no));
-        renderNotificationSummary();
-
         renderDashboard(cachedTickets);
         updateSummary(cachedTickets);
         showToast(`✓ SYNCED ${allTickets.length} TICKETS`);
@@ -655,7 +653,6 @@ function pushNotif(msg, type = 'info', ticketNo = null, approvalId = null, appro
 }
 
 function renderNotifPanel() {
-    renderNotificationSummary();
     const list = document.getElementById('notif-list');
     if (!list) return;
     const unread = notifications.filter(n => !n.read);
@@ -689,39 +686,6 @@ function updateNotifBadge() {
     const count  = notifications.filter(n => !n.read).length;
     const badge  = document.getElementById('notif-badge');
     if (badge) { badge.style.display = count > 0 ? 'flex' : 'none'; badge.textContent = count > 9 ? '9+' : count; }
-}
-
-function renderNotificationSummary() {
-    const summary = document.getElementById('notif-summary');
-    if (!summary) return;
-
-    const tickets = typeof cachedTickets === 'undefined' ? [] : cachedTickets;
-    const pendingCount = tickets.filter(ticket => (ticket.Status || '').toUpperCase() === 'PENDING').length;
-    const criticalCount = tickets.filter(ticket =>
-        (ticket.SeverityLevel || '').toUpperCase() === 'CRITICAL' &&
-        (ticket.Status || '').toUpperCase() !== 'RESOLVED'
-    ).length;
-    const unreadCount = notifications.filter(notification => !notification.read).length;
-
-    summary.innerHTML = `
-        <button type="button" class="notif-summary-item" onclick="openNotificationFilter('pending')">
-            <span>Pending tickets</span><strong>${pendingCount}</strong><span class="notif-summary-action">View</span>
-        </button>
-        <button type="button" class="notif-summary-item" onclick="openNotificationFilter('critical')">
-            <span>Critical alerts</span><strong>${criticalCount}</strong><span class="notif-summary-action">View</span>
-        </button>
-        <div class="notif-summary-item notif-summary-readout">
-            <span>Unread notifications</span><strong>${unreadCount}</strong>
-        </div>`;
-}
-
-function openNotificationFilter(filter) {
-    const filterButton = document.querySelector(`.filter-chip[data-filter="${filter}"]`);
-    if (!filterButton) return;
-    document.getElementById('notif-panel')?.classList.remove('open');
-    showPage('dashboard');
-    applyFilter(filter, filterButton);
-    document.querySelector('.live-database-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function toggleNotifPanel() {
