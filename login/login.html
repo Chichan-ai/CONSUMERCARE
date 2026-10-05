@@ -11,7 +11,7 @@
                 class="login-panel-wordmark"
                 src="https://chichan-ai.github.io/CBAMS2.0/assets/ABC-RB%20%20-%20APPROVED%20%20LOGO%20-%20FULL%20COLOR-01.png"
                 alt="Agribank">
-            <h1 class="login-panel-title">Consumer Care | Log in</h1>
+            <h1 class="login-panel-title">Consumer Care Module</h1>
         </header>
 
         <div class="login-form" role="group" aria-label="Sign in">
@@ -41,13 +41,26 @@
                 </div>
             </div>
 
-            <button type="button" onclick="handleLogin()" id="loginBtn" class="login-btn">Sign in</button>
+            <button type="button" onclick="handleLogin()" id="loginBtn" class="login-btn">Login</button>
             <p id="login-error" class="hidden login-error-msg" aria-live="polite"></p>
         </div>
 
         <section class="login-notification-note" aria-labelledby="login-notification-title">
             <h2 id="login-notification-title">Notifications</h2>
-            <p>Sign in to view pending tickets, critical alerts, and recent notifications.</p>
+            <ul class="login-notification-list" aria-live="polite">
+                <li>
+                    <span>Pending tickets</span>
+                    <strong id="login-pending-count">Loading</strong>
+                </li>
+                <li class="login-notification-critical">
+                    <span>Critical alerts</span>
+                    <strong id="login-critical-count">Loading</strong>
+                </li>
+                <li class="login-notification-recent">
+                    <span>Recent notifications</span>
+                    <small>Sign in to view</small>
+                </li>
+            </ul>
         </section>
 
         <p class="login-version">Version 2.0.0</p>

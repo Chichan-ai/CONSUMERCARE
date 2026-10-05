@@ -114,6 +114,27 @@ async function loadLoginAds() {
 
 document.addEventListener('modulesReady', loadLoginAds, { once: true });
 
+async function loadLoginNotificationSummary() {
+    const pendingEl = document.getElementById('login-pending-count');
+    const criticalEl = document.getElementById('login-critical-count');
+    if (!pendingEl || !criticalEl) return;
+
+    const [pending, critical] = await Promise.all([
+        db.from('tickets')
+            .select('ticket_no', { count: 'exact', head: true })
+            .eq('status', 'PENDING'),
+        db.from('tickets')
+            .select('ticket_no', { count: 'exact', head: true })
+            .eq('severity_level', 'CRITICAL')
+            .neq('status', 'RESOLVED')
+    ]);
+
+    pendingEl.textContent = pending.error ? '--' : String(pending.count ?? 0);
+    criticalEl.textContent = critical.error ? '--' : String(critical.count ?? 0);
+}
+
+document.addEventListener('modulesReady', loadLoginNotificationSummary, { once: true });
+
 async function handleLogin() {
     const user     = (document.getElementById('username').value || '').trim().toUpperCase();
     const pass     = document.getElementById('password').value || '';

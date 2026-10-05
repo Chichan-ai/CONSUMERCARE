@@ -1284,48 +1284,6 @@ button.notif-summary-item:hover { border-color: var(--border-accent); background
     transition: left 0.26s cubic-bezier(0.16,1,0.3,1);
 }
 
-.topbar-operational-alerts {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 6px;
-}
-
-.topbar-alert-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 36px;
-    padding: 0 9px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-}
-
-.topbar-alert-button:hover {
-    border-color: var(--border-accent);
-    background: var(--accent-dim);
-}
-
-.topbar-alert-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    font-weight: 600;
-}
-
-.topbar-alert-button strong {
-    color: var(--orange);
-    font-family: var(--font-mono);
-    font-size: 12px;
-}
-
-.topbar-critical-button strong {
-    color: var(--red);
-}
-
 body.sidebar-expanded #top-bar {
     left: var(--sidebar-w);
 }
@@ -1601,8 +1559,6 @@ html, body { -webkit-tap-highlight-color: transparent; }
         max-width: 100%;
     }
     #global-search-wrap:focus-within { width: auto; }
-    .topbar-alert-label { display: none; }
-    .topbar-alert-button { min-width: 34px; padding: 0 7px; }
     /* Compact cards */
     .card-header { padding: 11px 14px; }
     .stat-card { padding: 16px 14px; }

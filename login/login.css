@@ -279,9 +279,14 @@ body:has(#login-section:not(.hidden)) {
     background: #ffffff !important;
 }
 
+#login-section .login-layout,
+#login-section .login-layout * {
+    font-family: 'Poppins', sans-serif !important;
+}
+
 .login-layout {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(390px, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(350px, 440px);
     min-height: 100vh;
     width: 100%;
     background: #ffffff;
@@ -369,7 +374,7 @@ body:has(#login-section:not(.hidden)) {
     flex-direction: column;
     gap: 20px;
     min-height: 100vh;
-    padding: 34px clamp(26px, 3vw, 42px) 22px;
+    padding: 34px clamp(20px, 2.5vw, 30px) 22px;
     background: #f1efea;
     color: #222923;
     font-family: var(--font-body);
@@ -523,6 +528,44 @@ body:has(#login-section:not(.hidden)) {
     border: 1px solid #dedbd5;
     border-radius: 7px;
     background: #ffffff;
+}
+
+.login-notification-list {
+    display: grid;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.login-notification-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 36px;
+    padding: 7px 0;
+    border-bottom: 1px solid #e8e6e2;
+    color: #394139;
+    font-size: 12px;
+}
+
+.login-notification-list li:last-child {
+    border-bottom: 0;
+}
+
+.login-notification-list strong {
+    color: #b76b21;
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+.login-notification-critical strong {
+    color: #c13932;
+}
+
+.login-notification-recent small {
+    color: #727771;
+    font-size: 11px;
 }
 
 .login-notification-note h2 {

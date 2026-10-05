@@ -702,10 +702,6 @@ function renderNotificationSummary() {
         (ticket.Status || '').toUpperCase() !== 'RESOLVED'
     ).length;
     const unreadCount = notifications.filter(notification => !notification.read).length;
-    const pendingBadge = document.getElementById('topbar-pending-count');
-    const criticalBadge = document.getElementById('topbar-alert-count');
-    if (pendingBadge) pendingBadge.textContent = pendingCount > 99 ? '99+' : String(pendingCount);
-    if (criticalBadge) criticalBadge.textContent = criticalCount > 99 ? '99+' : String(criticalCount);
 
     summary.innerHTML = `
         <button type="button" class="notif-summary-item" onclick="openNotificationFilter('pending')">

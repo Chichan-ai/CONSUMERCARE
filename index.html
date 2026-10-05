@@ -32,7 +32,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- ============= CSS MODULES ============= -->
     <link rel="stylesheet" href="shared/base.css">
@@ -64,16 +64,6 @@
 
 
     <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
-        <div class="topbar-operational-alerts" aria-label="Ticket alerts">
-            <button type="button" class="topbar-alert-button" onclick="openNotificationFilter('pending')" aria-label="Pending tickets" title="Pending tickets">
-                <span class="topbar-alert-label">PENDING</span>
-                <strong id="topbar-pending-count">0</strong>
-            </button>
-            <button type="button" class="topbar-alert-button topbar-critical-button" onclick="openNotificationFilter('critical')" aria-label="Critical alerts" title="Critical alerts">
-                <span class="topbar-alert-label">ALERTS</span>
-                <strong id="topbar-alert-count">0</strong>
-            </button>
-        </div>
         <!-- Global Search — beside notification -->
         <div id="global-search-wrap">
             <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
