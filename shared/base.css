@@ -1169,6 +1169,42 @@ select.input {
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
 }
+.notif-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+.notif-summary-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 10px;
+    text-align: left;
+}
+button.notif-summary-item { cursor: pointer; }
+button.notif-summary-item:hover { border-color: var(--border-accent); background: var(--accent-dim); }
+.notif-summary-item strong {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 15px;
+}
+.notif-summary-action {
+    grid-column: 1 / -1;
+    color: var(--accent);
+    font-size: 9px;
+    text-transform: uppercase;
+}
+.notif-summary-readout { cursor: default; }
 .notif-list { overflow-y: auto; flex: 1; }
 .notif-item {
     padding: 12px 16px;
@@ -1246,6 +1282,48 @@ select.input {
     gap: 12px;
     padding: 0 20px 0 20px;
     transition: left 0.26s cubic-bezier(0.16,1,0.3,1);
+}
+
+.topbar-operational-alerts {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+}
+
+.topbar-alert-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 9px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+}
+
+.topbar-alert-button:hover {
+    border-color: var(--border-accent);
+    background: var(--accent-dim);
+}
+
+.topbar-alert-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.topbar-alert-button strong {
+    color: var(--orange);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.topbar-critical-button strong {
+    color: var(--red);
 }
 
 body.sidebar-expanded #top-bar {
@@ -1523,6 +1601,8 @@ html, body { -webkit-tap-highlight-color: transparent; }
         max-width: 100%;
     }
     #global-search-wrap:focus-within { width: auto; }
+    .topbar-alert-label { display: none; }
+    .topbar-alert-button { min-width: 34px; padding: 0 7px; }
     /* Compact cards */
     .card-header { padding: 11px 14px; }
     .stat-card { padding: 16px 14px; }

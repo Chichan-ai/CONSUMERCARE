@@ -41,6 +41,7 @@ function renderDashboard(data) {
 
     // v2.0 extras
     updateExtendedKPIs(data);
+    renderNotificationSummary();
     // Update analytics page if visible
     const analyticsPage = document.getElementById('page-analytics');
     if (analyticsPage && !analyticsPage.classList.contains('hidden')) renderAnalytics();
@@ -314,7 +315,9 @@ function applyFilter(filter, btn) {
     const today = new Date().toISOString().split('T')[0];
     if (filter === 'pending')  filtered = filtered.filter(t => (t.Status||'').toLowerCase() === 'pending');
     if (filter === 'resolved') filtered = filtered.filter(t => (t.Status||'').toLowerCase() === 'resolved');
-    if (filter === 'critical') filtered = filtered.filter(t => (t.SeverityLevel||'').toUpperCase() === 'CRITICAL');
+    if (filter === 'critical') filtered = filtered.filter(t =>
+        (t.SeverityLevel || '').toUpperCase() === 'CRITICAL' && (t.Status || '').toUpperCase() !== 'RESOLVED'
+    );
     if (filter === 'today')    filtered = filtered.filter(t => t.DateIssued && t.DateIssued.startsWith(today));
     filtered.sort((a, b) => Number(b.TicketNo) - Number(a.TicketNo));
     populateTable(filtered.slice(0, 50));

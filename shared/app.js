@@ -57,7 +57,9 @@ document.addEventListener('modulesReady', () => {
         toggleBtn.addEventListener('click', () => {
             const isPassword = passwordInput.type === 'password';
             passwordInput.type = isPassword ? 'text' : 'password';
-            eyeIcon.textContent = isPassword ? 'hide' : 'show';
+            eyeIcon.textContent = isPassword ? 'Hide Password' : 'Show Password';
+            toggleBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            toggleBtn.setAttribute('aria-pressed', String(isPassword));
         });
     }
 
@@ -406,6 +408,7 @@ async function loadData() {
         cachedTickets.sort((a, b) => Number(b.TicketNo) - Number(a.TicketNo));
         // Keep raw export data in same order
         currentDashboardData.sort((a, b) => Number(b.ticket_no) - Number(a.ticket_no));
+        renderNotificationSummary();
 
         renderDashboard(cachedTickets);
         updateSummary(cachedTickets);
@@ -652,6 +655,7 @@ function pushNotif(msg, type = 'info', ticketNo = null, approvalId = null, appro
 }
 
 function renderNotifPanel() {
+    renderNotificationSummary();
     const list = document.getElementById('notif-list');
     if (!list) return;
     const unread = notifications.filter(n => !n.read);
@@ -685,6 +689,43 @@ function updateNotifBadge() {
     const count  = notifications.filter(n => !n.read).length;
     const badge  = document.getElementById('notif-badge');
     if (badge) { badge.style.display = count > 0 ? 'flex' : 'none'; badge.textContent = count > 9 ? '9+' : count; }
+}
+
+function renderNotificationSummary() {
+    const summary = document.getElementById('notif-summary');
+    if (!summary) return;
+
+    const tickets = typeof cachedTickets === 'undefined' ? [] : cachedTickets;
+    const pendingCount = tickets.filter(ticket => (ticket.Status || '').toUpperCase() === 'PENDING').length;
+    const criticalCount = tickets.filter(ticket =>
+        (ticket.SeverityLevel || '').toUpperCase() === 'CRITICAL' &&
+        (ticket.Status || '').toUpperCase() !== 'RESOLVED'
+    ).length;
+    const unreadCount = notifications.filter(notification => !notification.read).length;
+    const pendingBadge = document.getElementById('topbar-pending-count');
+    const criticalBadge = document.getElementById('topbar-alert-count');
+    if (pendingBadge) pendingBadge.textContent = pendingCount > 99 ? '99+' : String(pendingCount);
+    if (criticalBadge) criticalBadge.textContent = criticalCount > 99 ? '99+' : String(criticalCount);
+
+    summary.innerHTML = `
+        <button type="button" class="notif-summary-item" onclick="openNotificationFilter('pending')">
+            <span>Pending tickets</span><strong>${pendingCount}</strong><span class="notif-summary-action">View</span>
+        </button>
+        <button type="button" class="notif-summary-item" onclick="openNotificationFilter('critical')">
+            <span>Critical alerts</span><strong>${criticalCount}</strong><span class="notif-summary-action">View</span>
+        </button>
+        <div class="notif-summary-item notif-summary-readout">
+            <span>Unread notifications</span><strong>${unreadCount}</strong>
+        </div>`;
+}
+
+function openNotificationFilter(filter) {
+    const filterButton = document.querySelector(`.filter-chip[data-filter="${filter}"]`);
+    if (!filterButton) return;
+    document.getElementById('notif-panel')?.classList.remove('open');
+    showPage('dashboard');
+    applyFilter(filter, filterButton);
+    document.querySelector('.live-database-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function toggleNotifPanel() {

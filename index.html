@@ -64,6 +64,16 @@
 
 
     <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+        <div class="topbar-operational-alerts" aria-label="Ticket alerts">
+            <button type="button" class="topbar-alert-button" onclick="openNotificationFilter('pending')" aria-label="Pending tickets" title="Pending tickets">
+                <span class="topbar-alert-label">PENDING</span>
+                <strong id="topbar-pending-count">0</strong>
+            </button>
+            <button type="button" class="topbar-alert-button topbar-critical-button" onclick="openNotificationFilter('critical')" aria-label="Critical alerts" title="Critical alerts">
+                <span class="topbar-alert-label">ALERTS</span>
+                <strong id="topbar-alert-count">0</strong>
+            </button>
+        </div>
         <!-- Global Search — beside notification -->
         <div id="global-search-wrap">
             <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -81,9 +91,10 @@
 <!-- Notification Panel -->
 <div id="notif-panel">
     <div class="notif-header">
-        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text);">ALERTS &amp; NOTIFICATIONS</span>
+        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text);">NOTIFICATIONS &amp; ALERTS</span>
         <button type="button" onclick="clearAllNotifs()" style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);background:none;border:none;cursor:pointer;letter-spacing:0.08em;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">[CLEAR ALL]</button>
     </div>
+    <div class="notif-summary" id="notif-summary" aria-label="Operational notification summary"></div>
     <div class="notif-list" id="notif-list">
         <div style="padding:24px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">NO NOTIFICATIONS</div>
     </div>

@@ -1,6 +1,119 @@
 // =============================================
 // LOGIN
 // =============================================
+const LOGIN_AD_FALLBACKS = [
+    {
+        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/Untitled%20design%20(10).png',
+        alt_text: 'Agribank announcement 1'
+    },
+    {
+        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/ChatGPT%20Image%20Jul%2023,%202026,%2005_33_12%20PM.png',
+        alt_text: 'Agribank announcement 2'
+    },
+    {
+        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/ChatGPT%20Image%20Jul%2023,%202026,%2005_24_35%20PM.png',
+        alt_text: 'Agribank announcement 3'
+    }
+];
+
+let loginAdIndex = 0;
+let loginAdTimer = null;
+
+function validLoginAdUrl(value) {
+    try {
+        const url = new URL(value);
+        return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+    } catch {
+        return '';
+    }
+}
+
+function renderLoginAds(ads) {
+    const carousel = document.getElementById('login-ad-carousel');
+    if (!carousel) return;
+
+    clearInterval(loginAdTimer);
+    carousel.replaceChildren();
+
+    const validAds = ads.filter(ad => validLoginAdUrl(ad.image_url));
+    if (validAds.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'login-ad-loading';
+        emptyMessage.textContent = 'No announcements available';
+        carousel.append(emptyMessage);
+        return;
+    }
+
+    const slides = document.createElement('div');
+    slides.className = 'login-ad-slides';
+
+    validAds.forEach((ad, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'login-ad-slide';
+        slide.setAttribute('aria-hidden', 'true');
+        const image = document.createElement('img');
+        image.src = validLoginAdUrl(ad.image_url);
+        image.alt = ad.alt_text || `Agribank announcement ${index + 1}`;
+        image.decoding = 'async';
+        image.loading = index === 0 ? 'eager' : 'lazy';
+
+        const backdrop = document.createElement('div');
+        backdrop.className = 'login-ad-backdrop';
+        backdrop.setAttribute('aria-hidden', 'true');
+        backdrop.style.backgroundImage = `url("${image.src}")`;
+        slide.append(backdrop);
+
+        const linkUrl = validLoginAdUrl(ad.link_url || '');
+        if (linkUrl) {
+            const link = document.createElement('a');
+            link.href = linkUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.append(image);
+            slide.append(link);
+        } else {
+            slide.append(image);
+        }
+        slides.append(slide);
+    });
+    carousel.append(slides);
+    carousel._loginAdCount = validAds.length;
+    loginAdIndex = 0;
+    showLoginAd(0);
+    if (validAds.length > 1) loginAdTimer = setInterval(() => showLoginAd(loginAdIndex + 1), 6500);
+}
+
+function showLoginAd(index) {
+    const carousel = document.getElementById('login-ad-carousel');
+    if (!carousel || !carousel._loginAdCount) return;
+    loginAdIndex = (index + carousel._loginAdCount) % carousel._loginAdCount;
+    carousel.querySelectorAll('.login-ad-slide').forEach((slide, slideIndex) => {
+        const isActive = slideIndex === loginAdIndex;
+        slide.classList.toggle('active', isActive);
+        slide.setAttribute('aria-hidden', String(!isActive));
+    });
+}
+
+async function loadLoginAds() {
+    const carousel = document.getElementById('login-ad-carousel');
+    if (!carousel) return;
+
+    try {
+        const { data, error } = await db
+            .from('login_ads')
+            .select('image_url, alt_text, link_url')
+            .eq('is_active', true)
+            .order('sort_order', { ascending: true });
+        if (error) throw error;
+        renderLoginAds(data || []);
+    } catch (error) {
+        console.warn('[LoginAds] Backend unavailable; using default announcements:', error.message);
+        renderLoginAds(LOGIN_AD_FALLBACKS);
+    }
+}
+
+document.addEventListener('modulesReady', loadLoginAds, { once: true });
+
 async function handleLogin() {
     const user     = (document.getElementById('username').value || '').trim().toUpperCase();
     const pass     = document.getElementById('password').value || '';

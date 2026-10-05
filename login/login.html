@@ -1,72 +1,56 @@
-    <div class="login-card">
-
-        <!-- ── Header band with logo + title ── -->
-        <div class="login-card-header">
-            <!-- Logo: replace src with your actual logo file -->
-            <div class="login-logo-wrap">
-                <img src="assets/ABC-RB  - APPROVED  LOGO - FULL COLOR-08.png" alt="Agribank logo" style="width:100px;height:100px;object-fit:contain"/>
-            </div>
-            <div class="login-title">CONSUMER<span>CARE</span></div>
-            <div class="login-subtitle">DIGITAL BANKING</div>
+<div class="login-layout">
+    <section class="login-brand-panel" aria-label="Announcements">
+        <div class="login-ad-carousel" id="login-ad-carousel" aria-label="Advertisements">
+            <p class="login-ad-loading">Loading announcements...</p>
         </div>
+    </section>
 
-        <!-- ── Form body ── -->
-        <div class="login-card-body">
-            <div style="display:flex; flex-direction:column; gap:18px;">
+    <aside class="login-panel" aria-label="Consumer Care sign in">
+        <header class="login-panel-header">
+            <img
+                class="login-panel-wordmark"
+                src="https://chichan-ai.github.io/CBAMS2.0/assets/ABC-RB%20%20-%20APPROVED%20%20LOGO%20-%20FULL%20COLOR-01.png"
+                alt="Agribank">
+            <h1 class="login-panel-title">Consumer Care | Log in</h1>
+        </header>
 
-                <!-- Username -->
-                <div>
-                    <label class="login-label">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:5px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Username
-                    </label>
+        <div class="login-form" role="group" aria-label="Sign in">
+            <div class="login-field">
+                <label class="login-label" for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter your username"
+                    oninput="this.value = this.value.toUpperCase()"
+                    class="login-input"
+                    autocomplete="username">
+            </div>
+
+            <div class="login-field login-password-field">
+                <label class="login-label" for="password">Password</label>
+                <div class="login-password-control">
                     <input
-                        type="text"
-                        id="username"
-                        placeholder="Enter your username"
-                        oninput="this.value = this.value.toUpperCase()"
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
                         class="login-input"
-                        style="text-transform:uppercase; letter-spacing:0.05em;"
-                        autocomplete="username">
+                        autocomplete="current-password">
+                    <button type="button" id="toggleBtn" class="login-pw-toggle" aria-label="Show password" aria-pressed="false">
+                        <span id="eyeIcon">Show Password</span>
+                    </button>
                 </div>
-
-                <!-- Password -->
-                <div>
-                    <label class="login-label">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        Password
-                    </label>
-                    <div style="position:relative;">
-                        <input
-                            type="password"
-                            id="password"
-                            placeholder="Enter your password"
-                            class="login-input"
-                            style="padding-right:64px;"
-                            autocomplete="current-password">
-                        <button type="button" id="toggleBtn" class="login-pw-toggle">
-                            <span id="eyeIcon">SHOW</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Login Button -->
-                <button onclick="handleLogin()" id="loginBtn" class="login-btn" style="margin-top:4px;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                    LOGIN
-                </button>
-
-                <!-- Error message -->
-                <p id="login-error" class="hidden login-error-msg"></p>
-
             </div>
+
+            <button type="button" onclick="handleLogin()" id="loginBtn" class="login-btn">Sign in</button>
+            <p id="login-error" class="hidden login-error-msg" aria-live="polite"></p>
         </div>
 
-        <!-- ── Footer ── -->
-        <div class="login-card-footer">
-            <p class="login-footer-text">
-                Beta Version &nbsp;·&nbsp; Agribank
-            </p>
-        </div>
+        <section class="login-notification-note" aria-labelledby="login-notification-title">
+            <h2 id="login-notification-title">Notifications</h2>
+            <p>Sign in to view pending tickets, critical alerts, and recent notifications.</p>
+        </section>
 
-    </div>
+        <p class="login-version">Version 2.0.0</p>
+    </aside>
+
+</div>
