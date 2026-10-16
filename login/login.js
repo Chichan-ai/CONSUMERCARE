@@ -3,15 +3,15 @@
 // =============================================
 const LOGIN_AD_FALLBACKS = [
     {
-        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/Untitled%20design%20(10).png',
+        image_url: 'assets/Agribank_asset2.png',
         alt_text: 'Agribank announcement 1'
     },
     {
-        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/ChatGPT%20Image%20Jul%2023,%202026,%2005_33_12%20PM.png',
+        image_url: 'assets/agribank_asset1.jpg',
         alt_text: 'Agribank announcement 2'
     },
     {
-        image_url: 'https://chichan-ai.github.io/CBAMS2.0/assets/ChatGPT%20Image%20Jul%2023,%202026,%2005_24_35%20PM.png',
+        image_url: 'assets/agribank_asset3.jpg',
         alt_text: 'Agribank announcement 3'
     }
 ];
@@ -21,7 +21,7 @@ let loginAdTimer = null;
 
 function validLoginAdUrl(value) {
     try {
-        const url = new URL(value);
+        const url = new URL(value, document.baseURI);
         return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
     } catch {
         return '';

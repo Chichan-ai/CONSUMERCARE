@@ -370,14 +370,52 @@ body:has(#login-section:not(.hidden)) {
 }
 
 .login-panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 20px;
     min-height: 100vh;
     padding: 34px clamp(20px, 2.5vw, 30px) 22px;
-    background: #f1efea;
+    background: #f8fbfa;
     color: #222923;
     font-family: var(--font-body);
+}
+
+.login-panel::before,
+.login-panel::after {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+    content: '';
+}
+
+.login-panel::before {
+    width: 190px;
+    height: 190px;
+    background:
+        repeating-linear-gradient(0deg, transparent 0 17px, rgba(21, 132, 117, 0.11) 17px 18px),
+        repeating-linear-gradient(90deg, transparent 0 17px, rgba(21, 132, 117, 0.11) 17px 18px);
+    clip-path: polygon(35% 0, 100% 0, 100% 100%, 0 38%);
+    mask-image: linear-gradient(135deg, #000 10%, transparent 88%);
+}
+
+.login-panel::after {
+    top: 22px;
+    right: 22px;
+    width: 58px;
+    height: 58px;
+    border-top: 2px solid #18a991;
+    border-right: 2px solid #18a991;
+    filter: drop-shadow(0 0 5px rgba(24, 169, 145, 0.6));
+}
+
+.login-panel > * {
+    position: relative;
+    z-index: 1;
 }
 
 .login-panel-header {
@@ -390,11 +428,10 @@ body:has(#login-section:not(.hidden)) {
 
 .login-panel-wordmark {
     display: block;
-    width: 100%;
-    max-width: 100%;
-    height: auto;
+    width: 10000px;
+    height: 120px;
     object-fit: contain;
-    object-position: center center;
+    object-position: left center;
 }
 
 .login-panel-title {
@@ -559,6 +596,30 @@ body:has(#login-section:not(.hidden)) {
     font-size: 13px;
 }
 
+@media (max-width: 760px) {
+    .login-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .login-brand-panel,
+    .login-ad-carousel {
+        min-height: 220px;
+        height: min(38vh, 320px);
+    }
+
+    .login-panel {
+        min-height: auto;
+        padding: 26px clamp(20px, 6vw, 36px) 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-field {
+        grid-template-columns: 72px minmax(0, 1fr);
+        column-gap: 8px;
+    }
+}
+
 .login-notification-critical strong {
     color: #c13932;
 }
@@ -617,6 +678,18 @@ body:has(#login-section:not(.hidden)) {
         min-height: auto;
         gap: 12px;
         padding: 16px clamp(18px, 3vw, 24px) calc(18px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .login-panel::before {
+        width: 135px;
+        height: 135px;
+    }
+
+    .login-panel::after {
+        top: 14px;
+        right: 14px;
+        width: 42px;
+        height: 42px;
     }
 
     .login-panel-header {
