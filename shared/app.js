@@ -96,6 +96,12 @@ document.addEventListener('modulesReady', () => {
         sessionStorage.clear();
         document.getElementById('login-section').classList.remove('hidden');
     }
+
+    const appLoading = document.getElementById('app-loading');
+    if (appLoading) {
+        appLoading.setAttribute('aria-hidden', 'true');
+        appLoading.classList.add('is-hidden');
+    }
 });
 
 // Reset session timer on click
@@ -159,10 +165,12 @@ function checkAdminAccess() {
     const isAdmin    = storedRole === 'ADMIN';
 
     // Show/hide admin-only nav items based purely on stored role
-    ['nav-kiosk', 'nav-admin', 'nav-audit', 'nav-analytics'].forEach(id => {
+    ['nav-kiosk', 'mobile-admin-kiosk', 'mobile-admin-analytics', 'mobile-admin-page', 'nav-admin', 'nav-audit', 'nav-analytics'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.toggle('hidden', !isAdmin);
     });
+    const mobileAdminLabel = document.getElementById('mobile-nav-admin-label');
+    if (mobileAdminLabel) mobileAdminLabel.textContent = isAdmin ? 'Admin' : 'More';
 
     // Guard: redirect encoder away from admin-only pages
     const currentPage = localStorage.getItem('activePage') || 'dashboard';
@@ -232,6 +240,8 @@ function applyTheme(theme) {
 
     const icon = document.getElementById('theme-icon');
     if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';
+    const mobileIcon = document.getElementById('mobile-theme-icon');
+    if (mobileIcon) mobileIcon.textContent = t === 'light' ? '☀️' : '🌙';
 
     if (cachedTickets.length > 0) renderDashboard(cachedTickets);
 }
@@ -241,6 +251,29 @@ function toggleTheme() {
     localStorage.setItem('theme', goDark ? 'dark' : 'light');
     applyTheme(goDark ? 'dark' : 'light');
 }
+
+function toggleMobileAdminMenu() {
+    const menu = document.getElementById('mobile-admin-menu');
+    const button = document.getElementById('mobile-nav-admin');
+    if (!menu || !button) return;
+
+    const isOpen = menu.classList.contains('hidden');
+    menu.classList.toggle('hidden', !isOpen);
+    button.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeMobileAdminMenu() {
+    document.getElementById('mobile-admin-menu')?.classList.add('hidden');
+    document.getElementById('mobile-nav-admin')?.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', event => {
+    if (!event.target.closest('#mobile-admin-menu, #mobile-nav-admin')) closeMobileAdminMenu();
+});
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMobileAdminMenu();
+});
 
 function showPage(page) {
     const isAdmin = (localStorage.getItem('userRole') || '').toUpperCase() === 'ADMIN';
@@ -259,6 +292,7 @@ function showPage(page) {
     // Guard: admin-only pages — fall back to dashboard for encoders
     const adminOnlyPages = ['kiosk', 'admin', 'audit', 'analytics'];
     if (adminOnlyPages.includes(page) && !isAdmin) page = 'dashboard';
+    closeMobileAdminMenu();
 
     if (window.innerWidth <= 767) closeSidebar();
 
@@ -267,9 +301,22 @@ function showPage(page) {
     ['dashboard','summary','reports','report','kiosk','analytics','audit','admin'].forEach(p => {
         const pageEl = document.getElementById(`page-${p}`);
         const navEl  = document.getElementById(`nav-${p}`);
+        const mobileNavEl = document.getElementById(`mobile-nav-${p}`);
         if (pageEl) pageEl.classList.toggle('hidden', p !== page);
         if (navEl)  navEl.classList.toggle('active',  p === page);
+        if (mobileNavEl) {
+            mobileNavEl.classList.toggle('active', p === page);
+            if (p === page) mobileNavEl.setAttribute('aria-current', 'page');
+            else mobileNavEl.removeAttribute('aria-current');
+        }
     });
+    const mobileAdminNav = document.getElementById('mobile-nav-admin');
+    const isMobileAdminPage = ['kiosk', 'analytics', 'admin', 'audit'].includes(page);
+    if (mobileAdminNav) {
+        mobileAdminNav.classList.toggle('active', isMobileAdminPage);
+        if (isMobileAdminPage) mobileAdminNav.setAttribute('aria-current', 'page');
+        else mobileAdminNav.removeAttribute('aria-current');
+    }
 
     if (page === 'report')     updateDateInput();
     if (page === 'reports' && typeof renderReportTable === 'function') renderReportTable([]);
@@ -301,14 +348,28 @@ function toggleSidebarExpand() {
 
 // Restore sidebar state on load
 function restoreSidebarState() {
+    if (window.innerWidth <= 767) {
+        document.getElementById('sidebar')?.classList.remove('expanded');
+        document.body.classList.remove('sidebar-expanded');
+        document.getElementById('sidebar-overlay')?.classList.remove('visible');
+        document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', 'false');
+        return;
+    }
     if (localStorage.getItem('sidebarExpanded') === '1') {
         document.getElementById('sidebar')?.classList.add('expanded');
         document.body.classList.add('sidebar-expanded');
-        const isMobile = window.innerWidth <= 767;
-        document.getElementById('sidebar-overlay')?.classList.toggle('visible', isMobile);
-        document.getElementById('hamburger-btn')?.setAttribute('aria-expanded', String(isMobile));
     }
 }
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth <= 767) {
+        document.getElementById('sidebar')?.classList.remove('expanded');
+        document.body.classList.remove('sidebar-expanded');
+        document.getElementById('sidebar-overlay')?.classList.remove('visible');
+    } else if (localStorage.getItem('sidebarExpanded') === '1') {
+        restoreSidebarState();
+    }
+});
 
 // Legacy stubs — kept for any remaining callers
 function toggleSidebar() { toggleSidebarExpand(); }

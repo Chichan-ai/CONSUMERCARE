@@ -42,6 +42,13 @@
             </div>
 
             <button type="button" onclick="handleLogin()" id="loginBtn" class="login-btn">Login</button>
+            <div id="login-loading" class="login-loading hidden" role="status" aria-label="Signing in">
+                <span class="login-loading-avatar" aria-hidden="true"></span>
+                <span class="login-loading-lines" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
             <p id="login-error" class="hidden login-error-msg" aria-live="polite"></p>
         </div>
 

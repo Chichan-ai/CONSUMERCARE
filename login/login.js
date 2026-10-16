@@ -140,6 +140,7 @@ async function handleLogin() {
     const pass     = document.getElementById('password').value || '';
     const errorMsg = document.getElementById('login-error');
     const btn      = document.getElementById('loginBtn');
+    const loading  = document.getElementById('login-loading');
 
     errorMsg.classList.add('hidden');
 
@@ -149,8 +150,9 @@ async function handleLogin() {
         return;
     }
 
-    btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:#ffffff;border-color:rgba(255,255,255,0.3);"></div> LOGGING IN...';
-    btn.disabled  = true;
+    btn.disabled = true;
+    btn.classList.add('hidden');
+    loading.classList.remove('hidden');
 
     try {
         const { data, error } = await db
@@ -198,6 +200,8 @@ async function handleLogin() {
         errorMsg.innerText = msg;
         errorMsg.classList.remove('hidden');
         btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> SIGN IN';
-        btn.disabled  = false;
+        btn.disabled = false;
+        btn.classList.remove('hidden');
+        loading.classList.add('hidden');
     }
 }

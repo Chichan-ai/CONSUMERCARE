@@ -530,24 +530,102 @@ body:has(#login-section:not(.hidden)) {
     min-height: 40px;
     margin-top: 2px;
     border-radius: 6px;
-    background: #2b7b40;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 2px solid #2b7b40;
+    background: transparent;
+    color: #2b7b40;
     box-shadow: none;
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 0;
     text-transform: none;
+    transition: color 0.3s;
+}
+
+.login-btn::before {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    z-index: -1;
+    width: 150px;
+    height: 200px;
+    border-radius: 50%;
+    background: #2b7b40;
+    content: "";
+    transition: top 0.3s, left 0.3s;
 }
 
 .login-btn:hover {
-    background: #236a36;
+    background: transparent;
+    color: #2b7b40;
     box-shadow: 0 3px 9px rgba(35, 106, 54, 0.18);
     transform: translateY(-1px);
 }
 
+.login-btn:hover::before {
+    top: -30px;
+    left: -30px;
+}
+
 .login-btn:active {
-    background: #1e5c2f;
+    background: transparent;
     box-shadow: none;
+}
+
+.login-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 48px;
+}
+
+.login-loading-avatar,
+.login-loading-lines span {
+    display: block;
+    flex: 0 0 auto;
+    background: #d1d5db;
+    animation: loginSkeletonPulse 1.4s ease-in-out infinite;
+}
+
+.login-loading-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.login-loading-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-loading-lines span {
+    height: 20px;
+    border-radius: 999px;
+}
+
+.login-loading-lines span:first-child {
+    width: 112px;
+}
+
+.login-loading-lines span:last-child {
+    width: 144px;
+    animation-delay: 0.15s;
+}
+
+@keyframes loginSkeletonPulse {
+    50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-loading-avatar,
+    .login-loading-lines span {
+        animation: none;
+    }
 }
 
 .login-error-msg {

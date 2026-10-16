@@ -47,6 +47,16 @@
 </head>
 <body class="light">
 
+<div id="app-loading" role="status" aria-label="Loading Consumer Care">
+    <div class="app-loading-content" aria-hidden="true">
+        <span class="app-loading-avatar"></span>
+        <span class="app-loading-lines">
+            <span></span>
+            <span></span>
+        </span>
+    </div>
+</div>
+
 <!-- Sidebar backdrop overlay -->
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
@@ -66,8 +76,10 @@
     <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
         <!-- Global Search — beside notification -->
         <div id="global-search-wrap">
-            <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="global-search" aria-label="Search tickets and clients" placeholder="Search tickets, clients..." oninput="handleGlobalSearch(this.value)" onfocus="openSearchPanel()" autocomplete="off">
+            <span class="global-search-underline" aria-hidden="true"></span>
+            <span class="global-search-highlight" aria-hidden="true"></span>
+            <svg class="global-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <div id="search-results-panel"></div>
         </div>
         <!-- Notification Bell -->
@@ -248,6 +260,52 @@
             </button>
         </div>
     </aside>
+
+    <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="Main navigation">
+        <button type="button" id="mobile-nav-dashboard" class="active" aria-current="page" onclick="showPage('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+        </button>
+        <button type="button" id="mobile-nav-summary" onclick="showPage('summary')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            <span>Summary</span>
+        </button>
+        <button type="button" id="mobile-nav-reports" onclick="showPage('reports')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+            <span>Reports</span>
+        </button>
+        <button type="button" id="mobile-nav-report" onclick="showPage('report')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>New Entry</span>
+        </button>
+        <button type="button" id="mobile-nav-admin" aria-expanded="false" aria-controls="mobile-admin-menu" onclick="toggleMobileAdminMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 2.94-.08-.02a1.7 1.7 0 0 0-1.83.58l-.05.07h-3.4l-.05-.07a1.7 1.7 0 0 0-1.83-.58l-.08.02-1.7-2.94.06-.06A1.7 1.7 0 0 0 9.4 15l-.08-.04v-3.4l.08-.04a1.7 1.7 0 0 0-.34-1.88L9 9.58l1.7-2.94.08.02a1.7 1.7 0 0 0 1.83-.58l.05-.07h3.4l.05.07a1.7 1.7 0 0 0 1.83.58l.08-.02 1.7 2.94-.06.06A1.7 1.7 0 0 0 19.4 11l.08.04v3.4z"/></svg>
+            <span id="mobile-nav-admin-label">More</span>
+        </button>
+    </nav>
+
+    <div id="mobile-admin-menu" class="mobile-admin-menu hidden" aria-label="Admin and account menu">
+        <button type="button" id="mobile-admin-kiosk" class="hidden" onclick="showPage('kiosk')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><rect x="8" y="6" width="8" height="8"/></svg>
+            <span>Kiosk</span>
+        </button>
+        <button type="button" id="mobile-admin-analytics" class="hidden" onclick="showPage('analytics')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Analytics</span>
+        </button>
+        <button type="button" id="mobile-admin-page" class="hidden" onclick="showPage('admin')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Admin</span>
+        </button>
+        <button type="button" id="mobile-theme-btn" onclick="toggleTheme(); closeMobileAdminMenu();">
+            <span id="mobile-theme-icon" aria-hidden="true">☀️</span>
+            <span>Toggle theme</span>
+        </button>
+        <button type="button" class="mobile-admin-logout" onclick="handleLogout()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Logout</span>
+        </button>
+    </div>
 
     <!-- MAIN CONTENT -->
 
